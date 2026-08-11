@@ -1,4 +1,4 @@
-import { type DragEvent, useEffect, useMemo, useState } from 'react'
+import { type DragEvent, type PointerEvent as ReactPointerEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { asset } from './constants/assets'
 import { objects } from './data/objects'
 import { createQuiz } from './data/questions'
@@ -6,10 +6,32 @@ import type { Question } from './types/quiz'
 
 type Answer = string | boolean | Record<string, string> | string[]
 
-const ObjectCard = ({ id, selected, state, onClick, compact = false, draggable = false, onDragStart }: { id: string; selected?: boolean; state?: 'right'|'wrong'; onClick?: () => void; compact?: boolean; draggable?: boolean; onDragStart?: (event: DragEvent<HTMLButtonElement>) => void }) => {
+const ObjectCard = ({ id, selected, state, onClick, compact = false, draggable = false, onDragStart, onPointerDrop }: { id: string; selected?: boolean; state?: 'right'|'wrong'; onClick?: () => void; compact?: boolean; draggable?: boolean; onDragStart?: (event: DragEvent<HTMLButtonElement>) => void; onPointerDrop?: (dropId:string)=>void }) => {
   const item = objects[id]
   const [loaded, setLoaded] = useState(!item.file)
-  return <button className={`object-card ${selected ? 'selected' : ''} ${state ?? ''} ${compact ? 'compact' : ''} ${loaded ? 'image-ready' : 'image-loading'} ${draggable ? 'draggable' : ''}`} onClick={onClick} disabled={!onClick && !draggable} draggable={draggable} onDragStart={onDragStart}>
+  const [touchOffset,setTouchOffset]=useState<{x:number;y:number}>()
+  const pointerStart=useRef<{x:number;y:number}>()
+  const didMove=useRef(false)
+  const pointerDown=(event:ReactPointerEvent<HTMLButtonElement>)=>{
+    if(!draggable||event.pointerType==='mouse')return
+    pointerStart.current={x:event.clientX,y:event.clientY};didMove.current=false
+    event.currentTarget.setPointerCapture(event.pointerId)
+  }
+  const pointerMove=(event:ReactPointerEvent<HTMLButtonElement>)=>{
+    if(!pointerStart.current)return
+    const x=event.clientX-pointerStart.current.x,y=event.clientY-pointerStart.current.y
+    if(Math.hypot(x,y)>7)didMove.current=true
+    if(didMove.current){event.preventDefault();setTouchOffset({x,y})}
+  }
+  const pointerUp=(event:ReactPointerEvent<HTMLButtonElement>)=>{
+    if(!pointerStart.current)return
+    if(didMove.current){
+      const target=document.elementFromPoint(event.clientX,event.clientY)?.closest<HTMLElement>('[data-drop-id]')
+      if(target?.dataset.dropId)onPointerDrop?.(target.dataset.dropId)
+    }
+    pointerStart.current=undefined;setTouchOffset(undefined)
+  }
+  return <button className={`object-card ${selected ? 'selected' : ''} ${state ?? ''} ${compact ? 'compact' : ''} ${loaded ? 'image-ready' : 'image-loading'} ${draggable ? 'draggable' : ''} ${touchOffset ? 'touch-dragging' : ''}`} style={touchOffset?{transform:`translate3d(${touchOffset.x}px,${touchOffset.y}px,0)`}:undefined} onClick={event=>{if(didMove.current){event.preventDefault();didMove.current=false;return}onClick?.()}} disabled={!onClick && !draggable} draggable={draggable} onDragStart={onDragStart} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={()=>{pointerStart.current=undefined;setTouchOffset(undefined)}}>
     <span className="image-shell">
       {item.file ? <><span className="image-placeholder"/><img src={asset('objects', item.file)} alt="" draggable={false} onLoad={() => setLoaded(true)} /></> : <span className={`fallback-visual tone-${item.tone ?? 0}`} aria-hidden="true">{item.label.length <= 2 ? item.label : item.label.slice(0, 1)}</span>}
     </span>
@@ -25,8 +47,8 @@ function Choice({ q, value, checked, setValue }: { q: Question; value?: string; 
 
 function Missing({ q, value, checked, setValue }: { q: Question; value?: string; checked: boolean; setValue:(v:string)=>void }) {
   const drop = (event: DragEvent<HTMLDivElement>) => { event.preventDefault(); const id=event.dataTransfer.getData('text/plain'); if(q.candidates!.includes(id)) setValue(id) }
-  return <><div className="sequence">{q.sequence!.map(id=><ObjectCard key={id} id={id} compact />)}<div className={`missing-slot ${value ? 'filled' : ''}`} onDragOver={e=>e.preventDefault()} onDrop={drop}>{value ? <ObjectCard id={value} compact state={checked?(value===q.correct?'right':'wrong'):undefined}/> : <><b>?</b><small>Перетащи сюда</small></>}</div></div>
-    <div className="choice-grid three">{q.candidates!.map(id=><ObjectCard key={id} id={id} draggable={!checked} onDragStart={e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}} selected={value===id} state={checked?id===q.correct?'right':value===id?'wrong':undefined:undefined} onClick={checked?undefined:()=>setValue(id)} />)}</div></>
+  return <><div className="sequence">{q.sequence!.map(id=><ObjectCard key={id} id={id} compact />)}<div data-drop-id="missing" className={`missing-slot ${value ? 'filled' : ''}`} onDragOver={e=>e.preventDefault()} onDrop={drop}>{value ? <ObjectCard id={value} compact state={checked?(value===q.correct?'right':'wrong'):undefined}/> : <><b>?</b><small>Перетащи сюда</small></>}</div></div>
+    <div className="choice-grid three">{q.candidates!.map(id=><ObjectCard key={id} id={id} draggable={!checked} onDragStart={e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}} onPointerDrop={dropId=>{if(dropId==='missing')setValue(id)}} selected={value===id} state={checked?id===q.correct?'right':value===id?'wrong':undefined:undefined} onClick={checked?undefined:()=>setValue(id)} />)}</div></>
 }
 
 function Sorting({ q, value, checked, setValue }: { q:Question; value:Record<string,string>; checked:boolean; setValue:(v:Record<string,string>)=>void }) {
@@ -34,8 +56,8 @@ function Sorting({ q, value, checked, setValue }: { q:Question; value:Record<str
   const startDrag=(event:DragEvent<HTMLButtonElement>,id:string)=>{event.dataTransfer.setData('text/plain',id);event.dataTransfer.effectAllowed='move'}
   const place=(event:DragEvent<HTMLElement>,category:string)=>{event.preventDefault();const id=event.dataTransfer.getData('text/plain');if(q.options!.includes(id))setValue({...value,[id]:category})}
   return <><p className="hint">Перетащи карточки в нужные группы или нажимай на них</p>
-    <div className="sort-source">{unplaced.map(id=><ObjectCard key={id} id={id} compact draggable={!checked} onDragStart={e=>startDrag(e,id)} onClick={()=>setValue({...value,[id]:q.categories![0].id})}/>)}</div>
-    <div className="sort-zones">{q.categories!.map(c=><section key={c.id} className="sort-zone" onDragOver={e=>e.preventDefault()} onDrop={e=>place(e,c.id)}><h3>{c.label}</h3>{q.options!.filter(id=>value[id]===c.id).map(id=><ObjectCard key={id} id={id} compact draggable={!checked} onDragStart={e=>startDrag(e,id)} state={checked?(q.assignments![id]===c.id?'right':'wrong'):undefined} onClick={checked?undefined:()=>setValue({...value,[id]:q.categories!.find(x=>x.id!==c.id)!.id})}/>)}</section>)}</div></>
+    <div className="sort-source">{unplaced.map(id=><ObjectCard key={id} id={id} compact draggable={!checked} onDragStart={e=>startDrag(e,id)} onPointerDrop={category=>{if(q.categories!.some(c=>c.id===category))setValue({...value,[id]:category})}} onClick={()=>setValue({...value,[id]:q.categories![0].id})}/>)}</div>
+    <div className="sort-zones">{q.categories!.map(c=><section key={c.id} data-drop-id={c.id} className="sort-zone" onDragOver={e=>e.preventDefault()} onDrop={e=>place(e,c.id)}><h3>{c.label}</h3>{q.options!.filter(id=>value[id]===c.id).map(id=><ObjectCard key={id} id={id} compact draggable={!checked} onDragStart={e=>startDrag(e,id)} onPointerDrop={category=>{if(q.categories!.some(item=>item.id===category))setValue({...value,[id]:category})}} state={checked?(q.assignments![id]===c.id?'right':'wrong'):undefined} onClick={checked?undefined:()=>setValue({...value,[id]:q.categories!.find(x=>x.id!==c.id)!.id})}/>)}</section>)}</div></>
 }
 
 function Ranking({ q, value, checked, setValue }: { q:Question; value:string[]; checked:boolean; setValue:(v:string[])=>void }) {
@@ -44,7 +66,7 @@ function Ranking({ q, value, checked, setValue }: { q:Question; value:string[]; 
   const moveTo=(id:string,target:number)=>{const next=value.filter(item=>item!==id);next.splice(target,0,id);setValue(next);setSelected(undefined)}
   const tapSlot=(index:number)=>{if(checked)return;if(selected===undefined){setSelected(index);return}const next=[...value];[next[selected],next[index]]=[next[index],next[selected]];setValue(next);setSelected(undefined)}
   const drop=(event:DragEvent<HTMLDivElement>,index:number)=>{event.preventDefault();const id=event.dataTransfer.getData('text/plain');if(value.includes(id))moveTo(id,index)}
-  return <><p className="hint">Перетащи карточки в поля 1–4. На телефоне нажми две карточки, чтобы поменять их местами.</p><div className="ranking slots">{value.map((id,i)=><div className={`rank-slot ${selected===i?'selected':''} ${checked?(correct[i]===id?'right':'wrong'):''}`} key={`${i}-${id}`} onDragOver={e=>e.preventDefault()} onDrop={e=>drop(e,i)} onClick={()=>tapSlot(i)}><b>{i+1}</b><ObjectCard id={id} compact draggable={!checked} onDragStart={e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}}/></div>)}</div></>
+  return <><p className="hint">Перетащи карточки в поля 1–4. Можно также нажать две карточки, чтобы поменять их местами.</p><div className="ranking slots">{value.map((id,i)=><div data-drop-id={`rank-${i}`} className={`rank-slot ${selected===i?'selected':''} ${checked?(correct[i]===id?'right':'wrong'):''}`} key={`${i}-${id}`} onDragOver={e=>e.preventDefault()} onDrop={e=>drop(e,i)} onClick={()=>tapSlot(i)}><b>{i+1}</b><ObjectCard id={id} compact draggable={!checked} onDragStart={e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}} onPointerDrop={dropId=>{const target=Number(dropId.replace('rank-',''));if(dropId.startsWith('rank-')&&Number.isInteger(target))moveTo(id,target)}}/></div>)}</div></>
 }
 
 export default function App() {
