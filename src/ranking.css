@@ -1,0 +1,32 @@
+.ranking.slots {
+  display: grid;
+  gap: 10px;
+}
+
+.rank-slot {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  min-height: 84px;
+  padding: 7px;
+  border: 2px dashed #ffffff2b;
+  border-radius: 17px;
+  background: #ffffff08;
+  transition: border-color .2s, background .2s, transform .2s;
+}
+
+.rank-slot:hover,
+.rank-slot.selected {
+  border-color: #a795ff;
+  background: #7657ff1c;
+}
+
+.rank-slot.selected { transform: scale(1.015); }
+.rank-slot > b { text-align: center; color: var(--yellow); font-size: 1.25rem; }
+.rank-slot .object-card { flex-direction: row; border: 0; background: transparent; padding: 2px 8px; }
+.rank-slot .image-shell { width: 72px; flex: 0 0 72px; }
+.rank-slot .object-card span:last-child { flex: 1; text-align: left; font-size: .82rem; }
+
+@media (min-width: 700px) {
+  .ranking.slots { grid-template-columns: 1fr 1fr; }
+}
