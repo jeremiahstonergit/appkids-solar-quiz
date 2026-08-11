@@ -9,8 +9,8 @@ type Answer = string | boolean | Record<string, string> | string[]
 const ObjectCard = ({ id, selected, state, onClick, compact = false, draggable = false, onDragStart, onPointerDrop }: { id: string; selected?: boolean; state?: 'right'|'wrong'; onClick?: () => void; compact?: boolean; draggable?: boolean; onDragStart?: (event: DragEvent<HTMLButtonElement>) => void; onPointerDrop?: (dropId:string)=>void }) => {
   const item = objects[id]
   const [loaded, setLoaded] = useState(!item.file)
-  const [touchOffset,setTouchOffset]=useState<{x:number;y:number}>()
-  const pointerStart=useRef<{x:number;y:number}>()
+  const [touchOffset,setTouchOffset]=useState<{x:number;y:number}|undefined>(undefined)
+  const pointerStart=useRef<{x:number;y:number}|undefined>(undefined)
   const didMove=useRef(false)
   const pointerDown=(event:ReactPointerEvent<HTMLButtonElement>)=>{
     if(!draggable||event.pointerType==='mouse')return
