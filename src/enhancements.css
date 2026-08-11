@@ -1,0 +1,36 @@
+.image-shell {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: clamp(92px, 21vw, 150px);
+}
+
+.object-card .image-shell img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  transform: scale(.94);
+  transition: opacity .45s ease, transform .55s cubic-bezier(.2,.8,.2,1);
+}
+
+.object-card.image-ready .image-shell img { opacity: 1; transform: scale(1); }
+.image-placeholder {
+  position: absolute;
+  inset: 12%;
+  border-radius: 50%;
+  background: linear-gradient(100deg,#ffffff0b 20%,#ffffff22 40%,#ffffff0b 60%);
+  background-size: 220% 100%;
+  animation: shimmer 1.25s infinite;
+}
+.image-ready .image-placeholder { opacity: 0; transition: opacity .25s; }
+.object-card.compact .image-shell { height: 60px; }
+.object-card.draggable { cursor: grab; touch-action: manipulation; user-select: none; }
+.object-card.draggable:active { cursor: grabbing; }
+.missing-slot { transition: background .2s,border-color .2s; background: #7657ff0b; }
+.missing-slot:hover { background: #7657ff1f; border-color: #c3b9ff; }
+.missing-slot small { display: block; text-align: center; font-size: .58rem; padding: 0 4px; }
+.missing-slot.filled { border-style: solid; }
+.sort-zone { transition: background .2s,border-color .2s; }
+.sort-zone:hover { border-color: #9f8eff; background: #7657ff12; }
+@keyframes shimmer { to { background-position: -220% 0; } }
