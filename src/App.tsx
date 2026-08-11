@@ -26,7 +26,7 @@ const ObjectCard = ({ id, selected, state, onClick, compact = false, draggable =
     if(didMove.current){
       event.preventDefault();setTouchOffset({x,y})
       const target=document.elementFromPoint(event.clientX,event.clientY)?.closest<HTMLElement>('[data-drop-id]')
-      if(target!==activeTarget.current){clearTarget();target?.classList.add('drag-over');activeTarget.current=target}
+      if(target!==activeTarget.current){clearTarget();target?.classList.add('drag-over');activeTarget.current=target??undefined}
     }
   }
   const pointerUp=(event:ReactPointerEvent<HTMLButtonElement>)=>{
