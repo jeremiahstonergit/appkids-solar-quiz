@@ -49,8 +49,9 @@
 .tone-5 { background: linear-gradient(145deg, #ddd7ff, #7768d8); }
 .tone-6 { background: linear-gradient(145deg, #ffe58f, #cc8b22); }
 .tone-7 { background: linear-gradient(145deg, #9fe4e7, #277ea7); }
-.object-card.draggable { cursor: grab; touch-action: manipulation; user-select: none; }
+.object-card.draggable { cursor: grab; touch-action: none; user-select: none; }
 .object-card.draggable:active { cursor: grabbing; }
+.object-card.touch-dragging { position: relative; z-index: 50; opacity: .9; pointer-events: none; transition: none; filter: drop-shadow(0 16px 18px #271a6680); }
 .missing-slot { transition: background .2s,border-color .2s; background: #7657ff0b; }
 .missing-slot:hover { background: #7657ff1f; border-color: #c3b9ff; }
 .missing-slot small { display: block; text-align: center; font-size: .58rem; padding: 0 4px; }
