@@ -21,7 +21,7 @@ function Choice({ q, value, checked, setValue }: { q: Question; value?: string; 
 }
 
 function Missing({ q, value, checked, setValue }: { q: Question; value?: string; checked: boolean; setValue:(v:string)=>void }) {
-  return <><div className="sequence">{q.sequence!.map(id=><ObjectCard key={id} id={id} compact />)}<div className="missing-slot">{checked && value===q.correct ? <ObjectCard id={value} compact /> : '?'}</div></div>
+  return <><div className="sequence">{q.sequence!.map(id=><ObjectCard key={id} id={id} compact />)}<div className="missing-slot">{checked && value===q.correct ? <ObjectCard id={value!} compact /> : '?'}</div></div>
     <div className="choice-grid three">{q.candidates!.map(id=><ObjectCard key={id} id={id} selected={value===id} state={checked?id===q.correct?'right':value===id?'wrong':undefined:undefined} onClick={checked?undefined:()=>setValue(id)} />)}</div></>
 }
 
