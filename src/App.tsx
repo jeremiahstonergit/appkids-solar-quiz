@@ -51,10 +51,11 @@ function Choice({ q, value, checked, setValue }: { q: Question; value?: string; 
     onClick={checked ? undefined : () => setValue(id)} />)}</div>
 }
 
-function Missing({ q, value, checked, setValue }: { q: Question; value?: string; checked: boolean; setValue:(v:string)=>void }) {
-  const drop = (event: DragEvent<HTMLDivElement>) => { event.preventDefault(); const id=event.dataTransfer.getData('text/plain'); if(q.candidates!.includes(id)) setValue(id) }
-  return <><div className="sequence">{q.sequence!.map(id=><ObjectCard key={id} id={id} compact />)}<div data-drop-id="missing" className={`missing-slot ${value ? 'filled' : ''}`} onDragOver={e=>e.preventDefault()} onDrop={drop}>{value ? <ObjectCard id={value} compact state={checked?(value===q.correct?'right':'wrong'):undefined}/> : <><b>?</b><small>Перетащи сюда</small></>}</div></div>
-    <div className="choice-grid three">{q.candidates!.map(id=><ObjectCard key={id} id={id} draggable={!checked} onDragStart={e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}} onPointerDrop={dropId=>{if(dropId==='missing')setValue(id)}} selected={value===id} state={checked?id===q.correct?'right':value===id?'wrong':undefined:undefined} onClick={checked?undefined:()=>setValue(id)} />)}</div></>
+function Missing({ q, value, checked, setValue, onComplete }: { q: Question; value?: string; checked: boolean; setValue:(v:string)=>void; onComplete:(right:boolean)=>void }) {
+  const place=(id:string)=>{if(checked||!q.candidates!.includes(id))return;setValue(id);onComplete(id===q.correct)}
+  const drop = (event: DragEvent<HTMLDivElement>) => { event.preventDefault(); event.currentTarget.classList.remove('drag-over'); place(event.dataTransfer.getData('text/plain')) }
+  return <div className="missing-game"><p className="hint">Перетащи подходящий объект в сияющее пустое место.</p><div className="sequence">{q.sequence!.map(id=><ObjectCard key={id} id={id} compact />)}<div data-drop-id="missing" className={`missing-slot ${value ? 'filled' : ''} ${checked?(value===q.correct?'right':'wrong'):''}`} onDragOver={event=>{event.preventDefault();event.currentTarget.classList.add('drag-over')}} onDragLeave={event=>event.currentTarget.classList.remove('drag-over')} onDrop={drop}>{value ? <ObjectCard id={value} compact state={value===q.correct?'right':'wrong'}/> : <><b>?</b><small>Перетащи сюда</small></>}</div></div>
+    <div className="choice-grid three missing-candidates">{q.candidates!.map(id=><ObjectCard key={id} id={id} draggable={!checked} onDragStart={e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}} onPointerDrop={dropId=>{if(dropId==='missing')place(id)}} selected={value===id} state={checked?id===q.correct?'right':value===id?'wrong':undefined:undefined} onClick={checked?undefined:()=>place(id)} />)}</div></div>
 }
 
 function Sorting({ q, value, checked, setValue, onComplete }: { q:Question; value:Record<string,string>; checked:boolean; setValue:(v:Record<string,string>)=>void; onComplete:(right:boolean)=>void }) {
@@ -74,10 +75,10 @@ function Sorting({ q, value, checked, setValue, onComplete }: { q:Question; valu
     },900)
   }
   const nativeDrop=(event:DragEvent<HTMLElement>,category:string)=>{event.preventDefault();place(category)}
+  const zone=(category:{id:string;label:string},index:number)=><section key={category.id} data-drop-id={category.id} className={`sort-zone side-zone ${chosen===category.id?(feedback?'right':'wrong'):''}`} onClick={()=>place(category.id)} onDragOver={event=>{event.preventDefault();event.currentTarget.classList.add('drag-over')}} onDragLeave={event=>event.currentTarget.classList.remove('drag-over')} onDrop={event=>{event.currentTarget.classList.remove('drag-over');nativeDrop(event,category.id)}}><span className="zone-arrow">{index===0?'←':'→'}</span><h3>{category.label}</h3><small>Перенести сюда</small></section>
   return <div className="sorting-round"><div className="round-progress"><b>{active+1}</b><span>из {q.options!.length}</span><i style={{width:`${(active+1)/q.options!.length*100}%`}}/></div>
     <p className="hint">Перетащи объект влево или вправо. Можно нажать на нужную зону.</p>
-    <div className={`sort-current ${feedback===true?'accepted':feedback===false?'rejected':''}`}><ObjectCard key={id} id={id} draggable={!checked&&feedback===undefined} state={feedback===undefined?undefined:feedback?'right':'wrong'} onDragStart={event=>{event.dataTransfer.setData('text/plain',id);event.dataTransfer.effectAllowed='move'}} onPointerDrop={place}/></div>
-    <div className="sort-zones sequential">{q.categories!.map((category,index)=><section key={category.id} data-drop-id={category.id} className={`sort-zone ${chosen===category.id?(feedback?'right':'wrong'):''}`} onClick={()=>place(category.id)} onDragOver={event=>{event.preventDefault();event.currentTarget.classList.add('drag-over')}} onDragLeave={event=>event.currentTarget.classList.remove('drag-over')} onDrop={event=>{event.currentTarget.classList.remove('drag-over');nativeDrop(event,category.id)}}><span className="zone-arrow">{index===0?'←':'→'}</span><h3>{category.label}</h3><small>Перенести сюда</small></section>)}</div>
+    <div className="sorting-stage">{zone(q.categories![0],0)}<div className={`sort-current ${feedback===true?'accepted':feedback===false?'rejected':''}`}><ObjectCard key={id} id={id} draggable={!checked&&feedback===undefined} state={feedback===undefined?undefined:feedback?'right':'wrong'} onDragStart={event=>{event.dataTransfer.setData('text/plain',id);event.dataTransfer.effectAllowed='move'}} onPointerDrop={place}/></div>{zone(q.categories![1],1)}</div>
     {feedback!==undefined&&<div className={`instant-feedback ${feedback?'success':'error'}`}>{feedback?'✓ Верно!':'× Неверно'}</div>}</div>
 }
 
@@ -132,11 +133,11 @@ export default function App() {
   return <main className="screen quiz"><div className="quiz-shell"><header><button className="home" aria-label="На главную" onClick={()=>setScreen('start')}>⌂</button><div className="progress-wrap"><div className="progress-meta"><span>Вопрос {index+1}</span><b>{index+1} из {sessionQuestions.length}</b></div><div className="progress"><i style={{width:`${(index+1)/sessionQuestions.length*100}%`}}/></div></div></header>
     <section className="question-card"><span className="mechanic">{({multiple_choice:'Выбери ответ',odd_one_out:'Найди лишнее',missing_item:'Продолжи ряд',sorting:'Разложи по группам',ranking:'Выстрой порядок',true_false:'Правда или нет'})[q.type]}</span><h2>{q.prompt}</h2>
       {(q.type==='multiple_choice'||q.type==='odd_one_out')&&<Choice q={q} value={current as string} checked={checked} setValue={setAnswer}/>} 
-      {q.type==='missing_item'&&<Missing q={q} value={current as string} checked={checked} setValue={setAnswer}/>} 
+      {q.type==='missing_item'&&<Missing q={q} value={current as string} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
       {q.type==='sorting'&&<Sorting q={q} value={current as Record<string,string>} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
       {q.type==='ranking'&&<Ranking q={q} value={current as string[]} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
       {q.type==='true_false'&&<div className="truth-grid"><button className={`truth yes ${checked?(q.correct===true?'right':current===true?'wrong':''):''} ${current===true?'selected':''}`} disabled={checked} onClick={()=>setAnswer(true)}>✓<span>Правда</span></button><button className={`truth no ${checked?(q.correct===false?'right':current===false?'wrong':''):''} ${current===false?'selected':''}`} disabled={checked} onClick={()=>setAnswer(false)}>×<span>Неправда</span></button></div>}
       {checked&&<div className={`feedback ${isCorrect()?'success':'error'}`}><b>{isCorrect()?'Верно!':'Почти!'}</b><span>{q.explanation}</span></div>}
-      {(checked||(q.type!=='sorting'&&q.type!=='ranking'))&&<button className="primary action" disabled={!checked&&!canCheck} onClick={checked?next:submit}>{checked?(index===sessionQuestions.length-1?'Узнать результат':'Дальше →'):'Проверить'}</button>}
+      {(checked||(q.type!=='sorting'&&q.type!=='ranking'&&q.type!=='missing_item'))&&<button className="primary action" disabled={!checked&&!canCheck} onClick={checked?next:submit}>{checked?(index===sessionQuestions.length-1?'Узнать результат':'Дальше →'):'Проверить'}</button>}
     </section></div></main>
 }
