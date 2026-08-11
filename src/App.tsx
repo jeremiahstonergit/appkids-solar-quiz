@@ -12,6 +12,8 @@ const ObjectCard = ({ id, selected, state, onClick, compact = false, draggable =
   const [touchOffset,setTouchOffset]=useState<{x:number;y:number}|undefined>(undefined)
   const pointerStart=useRef<{x:number;y:number}|undefined>(undefined)
   const didMove=useRef(false)
+  const activeTarget=useRef<HTMLElement|undefined>(undefined)
+  const clearTarget=()=>{activeTarget.current?.classList.remove('drag-over');activeTarget.current=undefined}
   const pointerDown=(event:ReactPointerEvent<HTMLButtonElement>)=>{
     if(!draggable||event.pointerType==='mouse')return
     pointerStart.current={x:event.clientX,y:event.clientY};didMove.current=false
@@ -21,17 +23,21 @@ const ObjectCard = ({ id, selected, state, onClick, compact = false, draggable =
     if(!pointerStart.current)return
     const x=event.clientX-pointerStart.current.x,y=event.clientY-pointerStart.current.y
     if(Math.hypot(x,y)>7)didMove.current=true
-    if(didMove.current){event.preventDefault();setTouchOffset({x,y})}
+    if(didMove.current){
+      event.preventDefault();setTouchOffset({x,y})
+      const target=document.elementFromPoint(event.clientX,event.clientY)?.closest<HTMLElement>('[data-drop-id]')
+      if(target!==activeTarget.current){clearTarget();target?.classList.add('drag-over');activeTarget.current=target??undefined}
+    }
   }
   const pointerUp=(event:ReactPointerEvent<HTMLButtonElement>)=>{
     if(!pointerStart.current)return
     if(didMove.current){
-      const target=document.elementFromPoint(event.clientX,event.clientY)?.closest<HTMLElement>('[data-drop-id]')
+      const target=activeTarget.current ?? document.elementFromPoint(event.clientX,event.clientY)?.closest<HTMLElement>('[data-drop-id]')
       if(target?.dataset.dropId)onPointerDrop?.(target.dataset.dropId)
     }
-    pointerStart.current=undefined;setTouchOffset(undefined)
+    clearTarget();pointerStart.current=undefined;setTouchOffset(undefined)
   }
-  return <button className={`object-card ${selected ? 'selected' : ''} ${state ?? ''} ${compact ? 'compact' : ''} ${loaded ? 'image-ready' : 'image-loading'} ${draggable ? 'draggable' : ''} ${touchOffset ? 'touch-dragging' : ''}`} style={touchOffset?{transform:`translate3d(${touchOffset.x}px,${touchOffset.y}px,0)`}:undefined} onClick={event=>{if(didMove.current){event.preventDefault();didMove.current=false;return}onClick?.()}} disabled={!onClick && !draggable} draggable={draggable} onDragStart={onDragStart} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={()=>{pointerStart.current=undefined;setTouchOffset(undefined)}}>
+  return <button className={`object-card ${selected ? 'selected' : ''} ${state ?? ''} ${compact ? 'compact' : ''} ${loaded ? 'image-ready' : 'image-loading'} ${draggable ? 'draggable' : ''} ${touchOffset ? 'touch-dragging' : ''}`} style={touchOffset?{transform:`translate3d(${touchOffset.x}px,${touchOffset.y}px,0) rotate(-3deg) scale(1.08)`}:undefined} onClick={event=>{if(didMove.current){event.preventDefault();didMove.current=false;return}onClick?.()}} disabled={!onClick && !draggable} draggable={draggable} onDragStart={onDragStart} onDragEnd={clearTarget} onPointerDown={pointerDown} onPointerMove={pointerMove} onPointerUp={pointerUp} onPointerCancel={()=>{clearTarget();pointerStart.current=undefined;setTouchOffset(undefined)}}>
     <span className="image-shell">
       {item.file ? <><span className="image-placeholder"/><img src={asset('objects', item.file)} alt="" draggable={false} onLoad={() => setLoaded(true)} /></> : <span className={`fallback-visual tone-${item.tone ?? 0}`} aria-hidden="true">{item.label.length <= 2 ? item.label : item.label.slice(0, 1)}</span>}
     </span>
@@ -51,22 +57,48 @@ function Missing({ q, value, checked, setValue }: { q: Question; value?: string;
     <div className="choice-grid three">{q.candidates!.map(id=><ObjectCard key={id} id={id} draggable={!checked} onDragStart={e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}} onPointerDrop={dropId=>{if(dropId==='missing')setValue(id)}} selected={value===id} state={checked?id===q.correct?'right':value===id?'wrong':undefined:undefined} onClick={checked?undefined:()=>setValue(id)} />)}</div></>
 }
 
-function Sorting({ q, value, checked, setValue }: { q:Question; value:Record<string,string>; checked:boolean; setValue:(v:Record<string,string>)=>void }) {
-  const unplaced=q.options!.filter(id=>!value[id])
-  const startDrag=(event:DragEvent<HTMLButtonElement>,id:string)=>{event.dataTransfer.setData('text/plain',id);event.dataTransfer.effectAllowed='move'}
-  const place=(event:DragEvent<HTMLElement>,category:string)=>{event.preventDefault();const id=event.dataTransfer.getData('text/plain');if(q.options!.includes(id))setValue({...value,[id]:category})}
-  return <><p className="hint">Перетащи карточки в нужные группы или нажимай на них</p>
-    <div className="sort-source">{unplaced.map(id=><ObjectCard key={id} id={id} compact draggable={!checked} onDragStart={e=>startDrag(e,id)} onPointerDrop={category=>{if(q.categories!.some(c=>c.id===category))setValue({...value,[id]:category})}} onClick={()=>setValue({...value,[id]:q.categories![0].id})}/>)}</div>
-    <div className="sort-zones">{q.categories!.map(c=><section key={c.id} data-drop-id={c.id} className="sort-zone" onDragOver={e=>e.preventDefault()} onDrop={e=>place(e,c.id)}><h3>{c.label}</h3>{q.options!.filter(id=>value[id]===c.id).map(id=><ObjectCard key={id} id={id} compact draggable={!checked} onDragStart={e=>startDrag(e,id)} onPointerDrop={category=>{if(q.categories!.some(item=>item.id===category))setValue({...value,[id]:category})}} state={checked?(q.assignments![id]===c.id?'right':'wrong'):undefined} onClick={checked?undefined:()=>setValue({...value,[id]:q.categories!.find(x=>x.id!==c.id)!.id})}/>)}</section>)}</div></>
+function Sorting({ q, value, checked, setValue, onComplete }: { q:Question; value:Record<string,string>; checked:boolean; setValue:(v:Record<string,string>)=>void; onComplete:(right:boolean)=>void }) {
+  const [active,setActive]=useState(0)
+  const [feedback,setFeedback]=useState<boolean|undefined>()
+  const [chosen,setChosen]=useState<string>()
+  const timer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined)
+  useEffect(()=>{setActive(0);setFeedback(undefined);setChosen(undefined);return()=>{if(timer.current)clearTimeout(timer.current)}},[q.id])
+  const id=q.options![active]
+  const place=(category:string)=>{
+    if(checked||feedback!==undefined||!q.categories!.some(item=>item.id===category))return
+    const next={...value,[id]:category};const right=q.assignments![id]===category
+    setValue(next);setChosen(category);setFeedback(right)
+    timer.current=setTimeout(()=>{
+      if(active===q.options!.length-1)onComplete(q.options!.every(item=>next[item]===q.assignments![item]))
+      else{setActive(index=>index+1);setFeedback(undefined);setChosen(undefined)}
+    },900)
+  }
+  const nativeDrop=(event:DragEvent<HTMLElement>,category:string)=>{event.preventDefault();place(category)}
+  return <div className="sorting-round"><div className="round-progress"><b>{active+1}</b><span>из {q.options!.length}</span><i style={{width:`${(active+1)/q.options!.length*100}%`}}/></div>
+    <p className="hint">Перетащи объект влево или вправо. Можно нажать на нужную зону.</p>
+    <div className={`sort-current ${feedback===true?'accepted':feedback===false?'rejected':''}`}><ObjectCard key={id} id={id} draggable={!checked&&feedback===undefined} state={feedback===undefined?undefined:feedback?'right':'wrong'} onDragStart={event=>{event.dataTransfer.setData('text/plain',id);event.dataTransfer.effectAllowed='move'}} onPointerDrop={place}/></div>
+    <div className="sort-zones sequential">{q.categories!.map((category,index)=><section key={category.id} data-drop-id={category.id} className={`sort-zone ${chosen===category.id?(feedback?'right':'wrong'):''}`} onClick={()=>place(category.id)} onDragOver={event=>{event.preventDefault();event.currentTarget.classList.add('drag-over')}} onDragLeave={event=>event.currentTarget.classList.remove('drag-over')} onDrop={event=>{event.currentTarget.classList.remove('drag-over');nativeDrop(event,category.id)}}><span className="zone-arrow">{index===0?'←':'→'}</span><h3>{category.label}</h3><small>Перенести сюда</small></section>)}</div>
+    {feedback!==undefined&&<div className={`instant-feedback ${feedback?'success':'error'}`}>{feedback?'✓ Верно!':'× Неверно'}</div>}</div>
 }
 
-function Ranking({ q, value, checked, setValue }: { q:Question; value:string[]; checked:boolean; setValue:(v:string[])=>void }) {
-  const [selected,setSelected]=useState<number>()
+function Ranking({ q, value, checked, setValue, onComplete }: { q:Question; value:string[]; checked:boolean; setValue:(v:string[])=>void; onComplete:(right:boolean)=>void }) {
+  const [selected,setSelected]=useState<string>()
+  const [errorSlot,setErrorSlot]=useState<number>()
+  const [message,setMessage]=useState<'right'|'wrong'>()
   const correct=(q.correct as string).split(',')
-  const moveTo=(id:string,target:number)=>{const next=value.filter(item=>item!==id);next.splice(target,0,id);setValue(next);setSelected(undefined)}
-  const tapSlot=(index:number)=>{if(checked)return;if(selected===undefined){setSelected(index);return}const next=[...value];[next[selected],next[index]]=[next[index],next[selected]];setValue(next);setSelected(undefined)}
-  const drop=(event:DragEvent<HTMLDivElement>,index:number)=>{event.preventDefault();const id=event.dataTransfer.getData('text/plain');if(value.includes(id))moveTo(id,index)}
-  return <><p className="hint">Перетащи карточки в поля 1–4. Можно также нажать две карточки, чтобы поменять их местами.</p><div className="ranking slots">{value.map((id,i)=><div data-drop-id={`rank-${i}`} className={`rank-slot ${selected===i?'selected':''} ${checked?(correct[i]===id?'right':'wrong'):''}`} key={`${i}-${id}`} onDragOver={e=>e.preventDefault()} onDrop={e=>drop(e,i)} onClick={()=>tapSlot(i)}><b>{i+1}</b><ObjectCard id={id} compact draggable={!checked} onDragStart={e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}} onPointerDrop={dropId=>{const target=Number(dropId.replace('rank-',''));if(dropId.startsWith('rank-')&&Number.isInteger(target))moveTo(id,target)}}/></div>)}</div></>
+  useEffect(()=>{setSelected(undefined);setErrorSlot(undefined);setMessage(undefined)},[q.id])
+  const place=(id:string,target:number)=>{
+    if(checked||value[target]||!q.options!.includes(id))return
+    if(correct[target]!==id){setErrorSlot(target);setMessage('wrong');setTimeout(()=>{setErrorSlot(undefined);setMessage(undefined)},700);return}
+    const next=[...value];next[target]=id;setValue(next);setSelected(undefined);setMessage('right')
+    if(next.every(Boolean))onComplete(true);else setTimeout(()=>setMessage(undefined),650)
+  }
+  const nativeDrop=(event:DragEvent<HTMLDivElement>,index:number)=>{event.preventDefault();place(event.dataTransfer.getData('text/plain'),index)}
+  const available=q.options!.filter(id=>!value.includes(id))
+  return <div className="ranking-game"><p className="hint">Выбери объект и поставь в нужное место. Верные позиции закрепляются.</p>
+    <div className="rank-slots-line">{correct.map((_,index)=><div key={index} data-drop-id={`rank-${index}`} className={`rank-slot ${value[index]?'right locked':''} ${errorSlot===index?'wrong shake':''}`} onClick={()=>selected&&place(selected,index)} onDragOver={event=>{event.preventDefault();event.currentTarget.classList.add('drag-over')}} onDragLeave={event=>event.currentTarget.classList.remove('drag-over')} onDrop={event=>{event.currentTarget.classList.remove('drag-over');nativeDrop(event,index)}}><b>{index+1}</b>{value[index]?<ObjectCard id={value[index]} compact state="right"/>:<span className="empty-rank">Перетащи сюда</span>}</div>)}</div>
+    <div className="rank-pool">{available.map(id=><ObjectCard key={id} id={id} compact draggable={!checked} selected={selected===id} onClick={()=>setSelected(current=>current===id?undefined:id)} onDragStart={event=>{event.dataTransfer.setData('text/plain',id);event.dataTransfer.effectAllowed='move'}} onPointerDrop={dropId=>{if(dropId.startsWith('rank-'))place(id,Number(dropId.slice(5)))}}/>)}</div>
+    {message&&<div className={`instant-feedback ${message==='right'?'success':'error'}`}>{message==='right'?'✓ На своём месте!':'× Попробуй другое место'}</div>}</div>
 }
 
 export default function App() {
@@ -85,11 +117,12 @@ export default function App() {
     ]
     urls.forEach(url=>{const image=new Image();image.decoding='async';image.src=url})
   },[])
-  const initialAnswer=useMemo(()=>q?.type==='sorting'?{}:q?.type==='ranking'?[...(q.options??[])]:undefined,[q])
+  const initialAnswer=useMemo(()=>q?.type==='sorting'?{}:q?.type==='ranking'?Array(q.options?.length??0).fill(''):undefined,[q])
   const current=answer ?? initialAnswer
   const isCorrect=()=> q.type==='sorting' ? q.options!.every(id=>(current as Record<string,string>)[id]===q.assignments![id]) : q.type==='ranking' ? (current as string[]).join(',')===q.correct : current===q.correct
-  const canCheck= q.type==='sorting' ? Object.keys(current as object).length===q.options!.length : q.type==='ranking' ? true : current!==undefined
+  const canCheck=current!==undefined
   const submit=()=>{if(!canCheck)return;setChecked(true);if(isCorrect())setScore(s=>s+1)}
+  const completeInteractive=(right:boolean)=>{if(checked)return;setChecked(true);if(right)setScore(s=>s+1)}
   const next=()=>{if(index===sessionQuestions.length-1){setScreen('finish');return}setIndex(i=>i+1);setAnswer(undefined);setChecked(false)}
   const restart=()=>{setSessionQuestions(createQuiz());setScreen('quiz');setIndex(0);setAnswer(undefined);setChecked(false);setScore(0)}
 
@@ -100,10 +133,10 @@ export default function App() {
     <section className="question-card"><span className="mechanic">{({multiple_choice:'Выбери ответ',odd_one_out:'Найди лишнее',missing_item:'Продолжи ряд',sorting:'Разложи по группам',ranking:'Выстрой порядок',true_false:'Правда или нет'})[q.type]}</span><h2>{q.prompt}</h2>
       {(q.type==='multiple_choice'||q.type==='odd_one_out')&&<Choice q={q} value={current as string} checked={checked} setValue={setAnswer}/>} 
       {q.type==='missing_item'&&<Missing q={q} value={current as string} checked={checked} setValue={setAnswer}/>} 
-      {q.type==='sorting'&&<Sorting q={q} value={current as Record<string,string>} checked={checked} setValue={setAnswer}/>} 
-      {q.type==='ranking'&&<Ranking q={q} value={current as string[]} checked={checked} setValue={setAnswer}/>} 
+      {q.type==='sorting'&&<Sorting q={q} value={current as Record<string,string>} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
+      {q.type==='ranking'&&<Ranking q={q} value={current as string[]} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
       {q.type==='true_false'&&<div className="truth-grid"><button className={`truth yes ${checked?(q.correct===true?'right':current===true?'wrong':''):''} ${current===true?'selected':''}`} disabled={checked} onClick={()=>setAnswer(true)}>✓<span>Правда</span></button><button className={`truth no ${checked?(q.correct===false?'right':current===false?'wrong':''):''} ${current===false?'selected':''}`} disabled={checked} onClick={()=>setAnswer(false)}>×<span>Неправда</span></button></div>}
       {checked&&<div className={`feedback ${isCorrect()?'success':'error'}`}><b>{isCorrect()?'Верно!':'Почти!'}</b><span>{q.explanation}</span></div>}
-      <button className="primary action" disabled={!canCheck} onClick={checked?next:submit}>{checked?(index===sessionQuestions.length-1?'Узнать результат':'Дальше →'):(q.type==='sorting'||q.type==='ranking'?'Готово':'Проверить')}</button>
+      {(checked||(q.type!=='sorting'&&q.type!=='ranking'))&&<button className="primary action" disabled={!checked&&!canCheck} onClick={checked?next:submit}>{checked?(index===sessionQuestions.length-1?'Узнать результат':'Дальше →'):'Проверить'}</button>}
     </section></div></main>
 }
