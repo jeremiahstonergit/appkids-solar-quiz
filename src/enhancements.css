@@ -25,6 +25,30 @@
 }
 .image-ready .image-placeholder { opacity: 0; transition: opacity .25s; }
 .object-card.compact .image-shell { height: 60px; }
+.fallback-visual {
+  display: grid;
+  place-items: center;
+  width: min(82%, 118px);
+  aspect-ratio: 1;
+  margin: auto;
+  border: 2px solid #ffffff80;
+  border-radius: 50%;
+  color: white;
+  font-size: clamp(1.8rem, 7vw, 3.6rem);
+  font-weight: 900;
+  line-height: 1;
+  text-shadow: 0 2px 10px #1a114faa;
+  box-shadow: inset -12px -15px 24px #24145d66, 0 10px 24px #503ab65e;
+  background: linear-gradient(145deg, #ffd76a, #ff7a59);
+}
+.compact .fallback-visual { width: 58px; font-size: 1.55rem; }
+.tone-1 { background: linear-gradient(145deg, #73e6ff, #5267df); }
+.tone-2 { background: linear-gradient(145deg, #f79df0, #8554d9); }
+.tone-3 { background: linear-gradient(145deg, #9bf4bc, #26a885); }
+.tone-4 { background: linear-gradient(145deg, #ffbc8c, #db534b); }
+.tone-5 { background: linear-gradient(145deg, #ddd7ff, #7768d8); }
+.tone-6 { background: linear-gradient(145deg, #ffe58f, #cc8b22); }
+.tone-7 { background: linear-gradient(145deg, #9fe4e7, #277ea7); }
 .object-card.draggable { cursor: grab; touch-action: manipulation; user-select: none; }
 .object-card.draggable:active { cursor: grabbing; }
 .missing-slot { transition: background .2s,border-color .2s; background: #7657ff0b; }
