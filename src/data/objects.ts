@@ -40,16 +40,19 @@ const list: QuizObject[] = [
   {
     "id": "o-saturn",
     "label": "Сатурн",
+    "file": "saturn.png",
     "tone": 6
   },
   {
     "id": "o-uran",
     "label": "Уран",
+    "file": "uranus.png",
     "tone": 7
   },
   {
     "id": "o-neptun",
     "label": "Нептун",
+    "file": "neptune.png",
     "tone": 0
   },
   {
@@ -61,51 +64,61 @@ const list: QuizObject[] = [
   {
     "id": "o-pluton",
     "label": "Плутон",
+    "file": "pluto.png",
     "tone": 2
   },
   {
     "id": "o-tserera",
     "label": "Церера",
+    "file": "ceres.png",
     "tone": 3
   },
   {
     "id": "o-erida",
     "label": "Эрида",
+    "file": "eris.png",
     "tone": 4
   },
   {
     "id": "o-haumea",
     "label": "Хаумеа",
+    "file": "haumea.png",
     "tone": 5
   },
   {
     "id": "o-io",
     "label": "Ио",
+    "file": "io.png",
     "tone": 6
   },
   {
     "id": "o-evropa",
     "label": "Европа",
+    "file": "europa.png",
     "tone": 7
   },
   {
     "id": "o-ganimed",
     "label": "Ганимед",
+    "file": "ganymede.png",
     "tone": 0
   },
   {
     "id": "o-kallisto",
     "label": "Каллисто",
+    "file": "callisto.png",
     "tone": 1
   },
   {
     "id": "o-titan",
     "label": "Титан",
+    "file": "titan.png",
     "tone": 2
   },
   {
     "id": "o-fobos",
     "label": "Фобос",
+    "file": "phobos.png",
     "tone": 3
   },
   {
@@ -129,6 +142,7 @@ const list: QuizObject[] = [
   {
     "id": "o-apollon-11",
     "label": "Аполлон-11",
+    "file": "apollo_11.png",
     "tone": 7
   },
   {
@@ -203,16 +217,19 @@ const list: QuizObject[] = [
   {
     "id": "o-vostochnyy",
     "label": "Восточный",
+    "file": "vostochny.png",
     "tone": 4
   },
   {
     "id": "o-plesetsk",
     "label": "Плесецк",
+    "file": "plesetsk.png",
     "tone": 5
   },
   {
     "id": "o-kapustin-yar",
     "label": "Капустин Яр",
+    "file": "kapustin_yar.png",
     "tone": 6
   },
   {
@@ -238,4 +255,3 @@ const list: QuizObject[] = [
 ]
 
 export const objects: Record<string, QuizObject> = Object.fromEntries(list.map(item => [item.id, item]))
-
