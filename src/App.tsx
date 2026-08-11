@@ -1,4 +1,4 @@
-import { type DragEvent, useMemo, useState } from 'react'
+import { type DragEvent, useEffect, useMemo, useState } from 'react'
 import { asset } from './constants/assets'
 import { objects } from './data/objects'
 import { questions } from './data/questions'
@@ -37,9 +37,12 @@ function Sorting({ q, value, checked, setValue }: { q:Question; value:Record<str
 }
 
 function Ranking({ q, value, checked, setValue }: { q:Question; value:string[]; checked:boolean; setValue:(v:string[])=>void }) {
-  const move=(i:number,delta:number)=>{const next=[...value];const target=i+delta;if(target<0||target>=next.length)return;[next[i],next[target]]=[next[target],next[i]];setValue(next)}
+  const [selected,setSelected]=useState<number>()
   const correct=(q.correct as string).split(',')
-  return <><p className="hint">Меняй порядок стрелками</p><div className="ranking">{value.map((id,i)=><div className={`rank-row ${checked?(correct[i]===id?'right':'wrong'):''}`} key={id}><b>{i+1}</b><ObjectCard id={id} compact/><div><button aria-label="Выше" disabled={checked||i===0} onClick={()=>move(i,-1)}>↑</button><button aria-label="Ниже" disabled={checked||i===value.length-1} onClick={()=>move(i,1)}>↓</button></div></div>)}</div></>
+  const moveTo=(id:string,target:number)=>{const next=value.filter(item=>item!==id);next.splice(target,0,id);setValue(next);setSelected(undefined)}
+  const tapSlot=(index:number)=>{if(checked)return;if(selected===undefined){setSelected(index);return}const next=[...value];[next[selected],next[index]]=[next[index],next[selected]];setValue(next);setSelected(undefined)}
+  const drop=(event:DragEvent<HTMLDivElement>,index:number)=>{event.preventDefault();const id=event.dataTransfer.getData('text/plain');if(value.includes(id))moveTo(id,index)}
+  return <><p className="hint">Перетащи карточки в поля 1–4. На телефоне нажми две карточки, чтобы поменять их местами.</p><div className="ranking slots">{value.map((id,i)=><div className={`rank-slot ${selected===i?'selected':''} ${checked?(correct[i]===id?'right':'wrong'):''}`} key={`${i}-${id}`} onDragOver={e=>e.preventDefault()} onDrop={e=>drop(e,i)} onClick={()=>tapSlot(i)}><b>{i+1}</b><ObjectCard id={id} compact draggable={!checked} onDragStart={e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}}/></div>)}</div></>
 }
 
 export default function App() {
@@ -49,6 +52,14 @@ export default function App() {
   const [checked,setChecked]=useState(false)
   const [score,setScore]=useState(0)
   const q=questions[index]
+  useEffect(()=>{
+    const urls=[
+      ...Object.values(objects).map(item=>asset('objects',item.file)),
+      asset('backgrounds','bg_start_solar_system.png'),asset('backgrounds','bg_question_space.png'),asset('backgrounds','bg_finish_space.png'),
+      asset('heroes','hero_start_solar_system.png'),asset('heroes','hero_finish_success.png'),
+    ]
+    urls.forEach(url=>{const image=new Image();image.decoding='async';image.src=url})
+  },[])
   const initialAnswer=useMemo(()=>q?.type==='sorting'?{}:q?.type==='ranking'?[...(q.options??[])]:undefined,[q])
   const current=answer ?? initialAnswer
   const isCorrect=()=> q.type==='sorting' ? q.options!.every(id=>(current as Record<string,string>)[id]===q.assignments![id]) : q.type==='ranking' ? (current as string[]).join(',')===q.correct : current===q.correct
