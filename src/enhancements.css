@@ -51,11 +51,57 @@
 .tone-7 { background: linear-gradient(145deg, #9fe4e7, #277ea7); }
 .object-card.draggable { cursor: grab; touch-action: none; user-select: none; }
 .object-card.draggable:active { cursor: grabbing; }
-.object-card.touch-dragging { position: relative; z-index: 50; opacity: .9; pointer-events: none; transition: none; filter: drop-shadow(0 16px 18px #271a6680); }
+.object-card.touch-dragging {
+  position: relative;
+  z-index: 50;
+  opacity: .96;
+  pointer-events: none;
+  transition: none;
+  border-color: #fff!important;
+  background: #372d78f2!important;
+  box-shadow: 0 22px 45px #050819cc,0 0 0 5px #a998ff44;
+  filter: saturate(1.2);
+}
+.object-card.touch-dragging .image-shell { filter: drop-shadow(0 12px 15px #000a); }
+.object-card.touch-dragging::after {
+  content: 'Отпусти в подсвеченной зоне';
+  position: absolute;
+  left: 50%;
+  bottom: -27px;
+  translate: -50% 0;
+  width: max-content;
+  max-width: 180px;
+  padding: 5px 9px;
+  border-radius: 10px;
+  color: #201942;
+  background: var(--yellow);
+  font-size: .62rem;
+  font-weight: 800;
+  box-shadow: 0 5px 14px #0007;
+}
 .missing-slot { transition: background .2s,border-color .2s; background: #7657ff0b; }
 .missing-slot:hover { background: #7657ff1f; border-color: #c3b9ff; }
 .missing-slot small { display: block; text-align: center; font-size: .58rem; padding: 0 4px; }
 .missing-slot.filled { border-style: solid; }
-.sort-zone { transition: background .2s,border-color .2s; }
+.sorting-round { display: grid; gap: 10px; }
+.round-progress { position: relative; display: flex; justify-content: center; align-items: baseline; gap: 5px; padding-bottom: 8px; color: #cfc9ef; }
+.round-progress b { color: var(--yellow); font-size: 1.3rem; }
+.round-progress span { font-size: .75rem; }
+.round-progress i { position: absolute; bottom: 0; left: 0; height: 4px; border-radius: 4px; background: var(--yellow); transition: width .3s; }
+.sort-current { width: min(190px,60vw); margin: 0 auto; transition: .25s; }
+.sort-current.accepted { animation: correctPop .42s ease; }
+.sort-current.rejected { animation: shake .38s ease; }
+.sort-zones.sequential { margin-top: 2px; }
+.sort-zone { transition: background .2s,border-color .2s,transform .2s,box-shadow .2s; cursor: pointer; }
 .sort-zone:hover { border-color: #9f8eff; background: #7657ff12; }
+.sort-zones.sequential .sort-zone { min-height: 116px; display: grid; place-items: center; align-content: center; gap: 2px; }
+.sort-zone.drag-over { border-color:#e0d8ff; background:#7657ff42; transform:translateY(-5px) scale(1.025); box-shadow:0 0 0 6px #7657ff22,inset 0 0 28px #9f8eff26; animation:targetPulse .7s infinite alternate; }
+.sort-zone h3 { min-height: 0; margin: 2px 0; }
+.sort-zone small { color:#aaa4cc; font-size:.62rem; }
+.zone-arrow { color:var(--yellow); font-size:1.65rem; font-weight:900; }
+.instant-feedback { margin: 2px auto 0; padding: 8px 16px; border-radius: 14px; font-weight: 900; animation: feedbackIn .25s ease; }
+.instant-feedback.success { color:#8bf1c5; background:#47d89b20; border:1px solid #47d89b55; }
+.instant-feedback.error { color:#ff9baa; background:#ff6c8120; border:1px solid #ff6c8155; }
+@keyframes correctPop { 50%{transform:scale(1.08)} }
+@keyframes feedbackIn { from{opacity:0;transform:translateY(6px)} }
 @keyframes shimmer { to { background-position: -220% 0; } }
