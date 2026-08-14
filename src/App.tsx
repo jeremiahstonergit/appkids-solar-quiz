@@ -22,9 +22,9 @@ const ObjectCard = ({ id, selected, state, onClick, compact = false, draggable =
   const numeric = !item.file && /^\d+$/.test(item.label)
   const [loaded, setLoaded] = useState(!item.file)
   const [touchOffset, setTouchOffset] = useState<{ x:number; y:number }>()
-  const pointerStart = useRef<{ x:number; y:number }>()
+  const pointerStart = useRef<{ x:number; y:number } | undefined>(undefined)
   const didMove = useRef(false)
-  const activeTarget = useRef<HTMLElement>()
+  const activeTarget = useRef<HTMLElement | undefined>(undefined)
 
   const clearTarget = () => {
     activeTarget.current?.classList.remove('drag-over')
@@ -127,7 +127,7 @@ function Sorting({ q, value, checked, setValue, onComplete }:{ q:Question; value
   const [active,setActive] = useState(0)
   const [feedback,setFeedback] = useState<boolean>()
   const [chosen,setChosen] = useState<string>()
-  const timer = useRef<ReturnType<typeof setTimeout>>()
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
   useEffect(() => {
     setActive(0);setFeedback(undefined);setChosen(undefined)
     return () => { if(timer.current) clearTimeout(timer.current) }
