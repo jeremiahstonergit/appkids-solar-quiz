@@ -35,7 +35,7 @@ export const sortingCategoryLabels: Record<number, [string, string]> = {
 }
 
 export const difficultyInfo: Record<Difficulty, { title:string; age:string; description:string }> = {
-  1:{title:'Легкий',age:'2–4 года',description:'Самые знакомые объекты и простые факты'},
+  1:{title:'Лёгкий',age:'2–4 года',description:'Самые знакомые объекты и простые факты'},
   2:{title:'Средний',age:'4–6 лет',description:'Сравнения, свойства и больше космических знаний'},
   3:{title:'Сложный',age:'6+ лет',description:'История космонавтики и непростые закономерности'},
 }

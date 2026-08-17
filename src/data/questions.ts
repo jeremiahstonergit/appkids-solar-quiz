@@ -12,7 +12,7 @@ export const questions: Question[] = [
       "o-venera"
     ],
     "correct": "o-solntse",
-    "explanation": "Правильный ответ: Солнце."
+    "explanation": "Солнце — звезда в центре нашей системы. Все планеты, включая Землю, движутся вокруг него."
   },
   {
     "id": 2,
@@ -25,7 +25,7 @@ export const questions: Question[] = [
       "o-9"
     ],
     "correct": "o-8",
-    "explanation": "Правильный ответ: 8."
+    "explanation": "В Солнечной системе восемь планет. Плутон относится к карликовым планетам, поэтому в этот счёт не входит."
   },
   {
     "id": 3,
@@ -38,7 +38,7 @@ export const questions: Question[] = [
       "o-mars"
     ],
     "correct": "o-merkuriy",
-    "explanation": "Правильный ответ: Меркурий."
+    "explanation": "Меркурий — первая планета от Солнца, поэтому он ближе всех остальных."
   },
   {
     "id": 4,
@@ -51,7 +51,7 @@ export const questions: Question[] = [
       "o-zemlya"
     ],
     "correct": "o-yupiter",
-    "explanation": "Правильный ответ: Юпитер."
+    "explanation": "Юпитер — крупнейшая планета Солнечной системы: он намного больше Земли и остальных планет."
   },
   {
     "id": 5,
@@ -64,7 +64,7 @@ export const questions: Question[] = [
       "o-yupiter"
     ],
     "correct": "o-venera",
-    "explanation": "Правильный ответ: Венера."
+    "explanation": "Венеру сильнее всего нагревает её плотная атмосфера: она удерживает тепло, как очень мощная теплица."
   },
   {
     "id": 6,
@@ -77,7 +77,7 @@ export const questions: Question[] = [
       "o-merkuriy"
     ],
     "correct": "o-zemlya",
-    "explanation": "Правильный ответ: Земля."
+    "explanation": "Мы живём на Земле — третьей планете от Солнца."
   },
   {
     "id": 7,
@@ -90,7 +90,7 @@ export const questions: Question[] = [
       "o-venera"
     ],
     "correct": "o-saturn",
-    "explanation": "Правильный ответ: Сатурн."
+    "explanation": "У Сатурна есть широкая система колец из льда, камней и пыли. Среди этих вариантов кольца есть только у него."
   },
   {
     "id": 8,
@@ -103,7 +103,7 @@ export const questions: Question[] = [
       "o-mars"
     ],
     "correct": "o-neptun",
-    "explanation": "Правильный ответ: Нептун."
+    "explanation": "Нептун — восьмая планета от Солнца, поэтому среди планет он находится дальше всех."
   },
   {
     "id": 9,
@@ -116,7 +116,7 @@ export const questions: Question[] = [
       "o-titan"
     ],
     "correct": "o-luna",
-    "explanation": "Правильный ответ: Луна."
+    "explanation": "Луна — естественный спутник Земли: она движется вокруг нашей планеты."
   },
   {
     "id": 10,
@@ -129,7 +129,7 @@ export const questions: Question[] = [
       "o-mars"
     ],
     "correct": "o-pluton",
-    "explanation": "Правильный ответ: Плутон."
+    "explanation": "Плутон долго называли девятой планетой, но теперь он относится к карликовым планетам."
   },
   {
     "id": 11,
@@ -142,7 +142,7 @@ export const questions: Question[] = [
       "o-yupiter"
     ],
     "correct": "o-yupiter",
-    "explanation": "Правильный ответ: Юпитер."
+    "explanation": "Юпитер — планета-гигант, а Меркурий, Венера и Марс — каменистые планеты."
   },
   {
     "id": 12,
@@ -155,7 +155,7 @@ export const questions: Question[] = [
       "o-saturn"
     ],
     "correct": "o-saturn",
-    "explanation": "Правильный ответ: Сатурн."
+    "explanation": "Сатурн — планета-гигант, а Земля, Марс и Венера — каменистые планеты."
   },
   {
     "id": 13,
@@ -168,7 +168,7 @@ export const questions: Question[] = [
       "o-titan"
     ],
     "correct": "o-titan",
-    "explanation": "Правильный ответ: Титан."
+    "explanation": "Ио, Европа и Ганимед вращаются вокруг Юпитера, а Титан — вокруг Сатурна."
   },
   {
     "id": 14,
@@ -181,7 +181,7 @@ export const questions: Question[] = [
       "o-luna"
     ],
     "correct": "o-luna",
-    "explanation": "Правильный ответ: Луна."
+    "explanation": "Луна — спутник Земли, а Меркурий, Венера и Земля — планеты."
   },
   {
     "id": 15,
@@ -194,7 +194,7 @@ export const questions: Question[] = [
       "o-zemlya"
     ],
     "correct": "o-zemlya",
-    "explanation": "Правильный ответ: Земля."
+    "explanation": "Земля — каменистая планета, а Юпитер, Сатурн и Уран — планеты-гиганты."
   },
   {
     "id": 16,
@@ -207,7 +207,7 @@ export const questions: Question[] = [
       "o-zemlya"
     ],
     "correct": "o-zemlya",
-    "explanation": "Правильный ответ: Земля."
+    "explanation": "Земля — обычная большая планета, а Плутон, Церера и Эрида относятся к карликовым планетам."
   },
   {
     "id": 17,
@@ -220,7 +220,7 @@ export const questions: Question[] = [
       "o-neptun"
     ],
     "correct": "o-solntse",
-    "explanation": "Правильный ответ: Солнце."
+    "explanation": "Солнце — звезда: оно само излучает свет. Юпитер, Сатурн и Нептун — планеты."
   },
   {
     "id": 18,
@@ -233,7 +233,7 @@ export const questions: Question[] = [
       "o-zemlya"
     ],
     "correct": "o-yupiter",
-    "explanation": "Правильный ответ: Юпитер."
+    "explanation": "Юпитер — планета-гигант, а Меркурий, Марс и Земля — каменистые планеты."
   },
   {
     "id": 19,
@@ -246,7 +246,7 @@ export const questions: Question[] = [
       "o-luna"
     ],
     "correct": "o-luna",
-    "explanation": "Правильный ответ: Луна."
+    "explanation": "Европа, Ганимед и Каллисто — спутники Юпитера, а Луна — спутник Земли."
   },
   {
     "id": 20,
@@ -259,7 +259,7 @@ export const questions: Question[] = [
       "o-mars"
     ],
     "correct": "o-mars",
-    "explanation": "Правильный ответ: Марс."
+    "explanation": "Марс — каменистая планета, а Юпитер, Сатурн и Уран — планеты-гиганты."
   },
   {
     "id": 21,
@@ -287,7 +287,7 @@ export const questions: Question[] = [
       "o-mars": "right",
       "o-yupiter": "right"
     },
-    "explanation": "Правильный ответ: Меркурий — слева; Венера — слева; Марс — справа; Юпитер — справа."
+    "explanation": "Планеты идут от Солнца так: Меркурий, Венера, Земля, Марс, Юпитер. Поэтому первые две ближе Земли, а Марс и Юпитер — дальше."
   },
   {
     "id": 22,
@@ -315,7 +315,7 @@ export const questions: Question[] = [
       "o-yupiter": "left",
       "o-evropa": "right"
     },
-    "explanation": "Правильный ответ: Земля — слева; Луна — справа; Юпитер — слева; Европа — справа."
+    "explanation": "Земля и Юпитер — планеты. Луна вращается вокруг Земли, а Европа — вокруг Юпитера, поэтому они спутники."
   },
   {
     "id": 23,
@@ -343,7 +343,7 @@ export const questions: Question[] = [
       "o-venera": "left",
       "o-neptun": "right"
     },
-    "explanation": "Правильный ответ: Марс — слева; Юпитер — справа; Венера — слева; Нептун — справа."
+    "explanation": "Марс и Венера имеют твёрдую каменистую поверхность. Юпитер и Нептун — огромные планеты-гиганты."
   },
   {
     "id": 24,
@@ -371,7 +371,7 @@ export const questions: Question[] = [
       "o-uran": "left",
       "o-mars": "right"
     },
-    "explanation": "Правильный ответ: Сатурн — слева; Земля — справа; Уран — слева; Марс — справа."
+    "explanation": "Кольца есть у всех четырёх планет-гигантов. Поэтому Сатурн и Уран — с кольцами, а Земля и Марс — без них."
   },
   {
     "id": 25,
@@ -399,7 +399,7 @@ export const questions: Question[] = [
       "o-pluton": "left",
       "o-titan": "right"
     },
-    "explanation": "Правильный ответ: Марс — слева; Луна — справа; Плутон — слева; Титан — справа."
+    "explanation": "Марс и Плутон движутся вокруг Солнца. Луна движется вокруг Земли, а Титан — вокруг Сатурна."
   },
   {
     "id": 26,
@@ -427,7 +427,7 @@ export const questions: Question[] = [
       "o-mars": "left",
       "o-merkuriy": "right"
     },
-    "explanation": "Правильный ответ: Земля — слева; Венера — справа; Марс — слева; Меркурий — справа."
+    "explanation": "У Земли есть Луна, а у Марса — Фобос и Деймос. У Меркурия и Венеры естественных спутников нет."
   },
   {
     "id": 27,
@@ -455,7 +455,7 @@ export const questions: Question[] = [
       "o-saturn": "left",
       "o-merkuriy": "right"
     },
-    "explanation": "Правильный ответ: Юпитер — слева; Марс — справа; Сатурн — слева; Меркурий — справа."
+    "explanation": "Юпитер и Сатурн намного больше Земли. Марс и Меркурий, наоборот, меньше неё."
   },
   {
     "id": 28,
@@ -483,7 +483,7 @@ export const questions: Question[] = [
       "o-yupiter": "right",
       "o-neptun": "right"
     },
-    "explanation": "Правильный ответ: Земля — слева; Венера — слева; Юпитер — справа; Нептун — справа."
+    "explanation": "Венера и Земля находятся ближе к Солнцу, чем Марс. Юпитер и Нептун расположены дальше Марса."
   },
   {
     "id": 29,
@@ -511,7 +511,7 @@ export const questions: Question[] = [
       "o-saturn": "left",
       "o-mars": "right"
     },
-    "explanation": "Правильный ответ: Юпитер — слева; Земля — справа; Сатурн — слева; Марс — справа."
+    "explanation": "Юпитер и Сатурн — газовые гиганты. Земля и Марс — каменистые планеты."
   },
   {
     "id": 30,
@@ -520,7 +520,7 @@ export const questions: Question[] = [
     "options": [
       "o-solntse",
       "o-zemlya",
-      "o-yupiter",
+      "o-sirius",
       "o-luna"
     ],
     "categories": [
@@ -536,10 +536,10 @@ export const questions: Question[] = [
     "assignments": {
       "o-solntse": "left",
       "o-zemlya": "right",
-      "o-yupiter": "right",
-      "o-luna": "right"
+      "o-luna": "right",
+      "o-sirius": "left"
     },
-    "explanation": "Правильный ответ: Солнце — слева; Земля — справа; Юпитер — справа; Луна — справа."
+    "explanation": "Солнце и Сириус — звёзды: они сами излучают свет. Земля — планета, а Луна — спутник."
   },
   {
     "id": 31,
@@ -551,8 +551,7 @@ export const questions: Question[] = [
       "o-zemlya",
       "o-mars"
     ],
-    "correct": "o-merkuriy,o-venera,o-zemlya,o-mars",
-    "explanation": "Правильный ответ: Меркурий → Венера → Земля → Марс."
+    "correct": "o-merkuriy,o-venera,o-zemlya,o-mars"
   },
   {
     "id": 32,
@@ -564,8 +563,7 @@ export const questions: Question[] = [
       "o-neptun",
       "o-yupiter"
     ],
-    "correct": "o-merkuriy,o-zemlya,o-neptun,o-yupiter",
-    "explanation": "Правильный ответ: Меркурий → Земля → Нептун → Юпитер."
+    "correct": "o-merkuriy,o-zemlya,o-neptun,o-yupiter"
   },
   {
     "id": 33,
@@ -577,8 +575,7 @@ export const questions: Question[] = [
       "o-venera",
       "o-neptun"
     ],
-    "correct": "o-venera,o-mars,o-saturn,o-neptun",
-    "explanation": "Правильный ответ: Венера → Марс → Сатурн → Нептун."
+    "correct": "o-venera,o-mars,o-saturn,o-neptun"
   },
   {
     "id": 34,
@@ -590,8 +587,7 @@ export const questions: Question[] = [
       "o-zemlya",
       "o-yupiter"
     ],
-    "correct": "o-merkuriy,o-mars,o-zemlya,o-yupiter",
-    "explanation": "Правильный ответ: Меркурий → Марс → Земля → Юпитер."
+    "correct": "o-merkuriy,o-mars,o-zemlya,o-yupiter"
   },
   {
     "id": 35,
@@ -603,8 +599,7 @@ export const questions: Question[] = [
       "o-yupiter",
       "o-zemlya"
     ],
-    "correct": "o-merkuriy,o-zemlya,o-yupiter,o-uran",
-    "explanation": "Правильный ответ: Меркурий → Земля → Юпитер → Уран."
+    "correct": "o-merkuriy,o-zemlya,o-yupiter,o-uran"
   },
   {
     "id": 36,
@@ -616,8 +611,7 @@ export const questions: Question[] = [
       "o-yupiter",
       "o-uran"
     ],
-    "correct": "o-yupiter,o-saturn,o-uran,o-neptun",
-    "explanation": "Правильный ответ: Юпитер → Сатурн → Уран → Нептун."
+    "correct": "o-yupiter,o-saturn,o-uran,o-neptun"
   },
   {
     "id": 37,
@@ -629,8 +623,7 @@ export const questions: Question[] = [
       "o-venera",
       "o-zemlya"
     ],
-    "correct": "o-merkuriy,o-venera,o-zemlya,o-mars",
-    "explanation": "Правильный ответ: Меркурий → Венера → Земля → Марс."
+    "correct": "o-merkuriy,o-venera,o-zemlya,o-mars"
   },
   {
     "id": 38,
@@ -642,8 +635,7 @@ export const questions: Question[] = [
       "o-uran",
       "o-neptun"
     ],
-    "correct": "o-yupiter,o-saturn,o-uran,o-neptun",
-    "explanation": "Правильный ответ: Юпитер → Сатурн → Уран → Нептун."
+    "correct": "o-yupiter,o-saturn,o-uran,o-neptun"
   },
   {
     "id": 39,
@@ -655,8 +647,7 @@ export const questions: Question[] = [
       "o-zemlya",
       "o-luna"
     ],
-    "correct": "o-solntse,o-yupiter,o-zemlya,o-luna",
-    "explanation": "Правильный ответ: Солнце → Юпитер → Земля → Луна."
+    "correct": "o-solntse,o-yupiter,o-zemlya,o-luna"
   },
   {
     "id": 40,
@@ -668,78 +659,67 @@ export const questions: Question[] = [
       "o-zemlya",
       "o-merkuriy"
     ],
-    "correct": "o-neptun,o-mars,o-zemlya,o-merkuriy",
-    "explanation": "Правильный ответ: Нептун → Марс → Земля → Меркурий."
+    "correct": "o-neptun,o-mars,o-zemlya,o-merkuriy"
   },
   {
     "id": 41,
     "type": "true_false",
     "prompt": "В Солнечной системе восемь планет.",
-    "correct": true,
-    "explanation": "Правильный ответ: правда."
+    "correct": true
   },
   {
     "id": 42,
     "type": "true_false",
     "prompt": "Меркурий — самая горячая планета Солнечной системы.",
-    "correct": false,
-    "explanation": "Правильный ответ: ложь."
+    "correct": false
   },
   {
     "id": 43,
     "type": "true_false",
     "prompt": "Юпитер — самая большая планета Солнечной системы.",
-    "correct": true,
-    "explanation": "Правильный ответ: правда."
+    "correct": true
   },
   {
     "id": 44,
     "type": "true_false",
     "prompt": "У Венеры есть естественные спутники.",
-    "correct": false,
-    "explanation": "Правильный ответ: ложь."
+    "correct": false
   },
   {
     "id": 45,
     "type": "true_false",
     "prompt": "Луна вращается вокруг Земли.",
-    "correct": true,
-    "explanation": "Правильный ответ: правда."
+    "correct": true
   },
   {
     "id": 46,
     "type": "true_false",
     "prompt": "Сатурн — единственная планета с кольцами.",
-    "correct": false,
-    "explanation": "Правильный ответ: ложь."
+    "correct": false
   },
   {
     "id": 47,
     "type": "true_false",
     "prompt": "Плутон сейчас считается карликовой планетой.",
-    "correct": true,
-    "explanation": "Правильный ответ: правда."
+    "correct": true
   },
   {
     "id": 48,
     "type": "true_false",
     "prompt": "У Меркурия и Венеры нет естественных спутников.",
-    "correct": true,
-    "explanation": "Правильный ответ: правда."
+    "correct": true
   },
   {
     "id": 49,
     "type": "true_false",
     "prompt": "Нептун ближе к Солнцу, чем Уран.",
-    "correct": false,
-    "explanation": "Правильный ответ: ложь."
+    "correct": false
   },
   {
     "id": 50,
     "type": "true_false",
     "prompt": "Земля — единственный мир в Солнечной системе, где нам достоверно известна жизнь.",
-    "correct": true,
-    "explanation": "Правильный ответ: правда."
+    "correct": true
   },
   {
     "id": 51,
@@ -756,7 +736,7 @@ export const questions: Question[] = [
       "o-luna"
     ],
     "correct": "o-mars",
-    "explanation": "Правильный ответ: Марс."
+    "explanation": "Меркурий, Венера, Земля и Марс — четыре каменистые планеты Солнечной системы."
   },
   {
     "id": 52,
@@ -773,7 +753,7 @@ export const questions: Question[] = [
       "o-mars"
     ],
     "correct": "o-neptun",
-    "explanation": "Правильный ответ: Нептун."
+    "explanation": "Юпитер, Сатурн, Уран и Нептун составляют группу четырёх планет-гигантов."
   },
   {
     "id": 53,
@@ -790,7 +770,7 @@ export const questions: Question[] = [
       "o-luna"
     ],
     "correct": "o-kallisto",
-    "explanation": "Правильный ответ: Каллисто."
+    "explanation": "Ио, Европа, Ганимед и Каллисто — четыре крупнейших спутника Юпитера, открытых Галилеем."
   },
   {
     "id": 54,
@@ -807,7 +787,7 @@ export const questions: Question[] = [
       "o-tserera"
     ],
     "correct": "o-evropa",
-    "explanation": "Правильный ответ: Европа."
+    "explanation": "Европа — естественный спутник Юпитера. Венера является планетой, а Церера — карликовой планетой."
   },
   {
     "id": 55,
@@ -824,7 +804,7 @@ export const questions: Question[] = [
       "o-mars"
     ],
     "correct": "o-haumea",
-    "explanation": "Правильный ответ: Хаумеа."
+    "explanation": "Хаумеа, как Плутон, Церера и Эрида, относится к карликовым планетам."
   },
   {
     "id": 56,
@@ -841,7 +821,7 @@ export const questions: Question[] = [
       "o-pluton"
     ],
     "correct": "o-zemlya",
-    "explanation": "Правильный ответ: Земля."
+    "explanation": "Земля дополняет четвёрку каменистых планет: Меркурий, Венера, Земля и Марс."
   },
   {
     "id": 57,
@@ -858,7 +838,7 @@ export const questions: Question[] = [
       "o-zemlya"
     ],
     "correct": "o-uran",
-    "explanation": "Правильный ответ: Уран."
+    "explanation": "Уран дополняет группу планет-гигантов вместе с Юпитером, Сатурном и Нептуном."
   },
   {
     "id": 58,
@@ -875,7 +855,7 @@ export const questions: Question[] = [
       "o-luna"
     ],
     "correct": "o-io",
-    "explanation": "Правильный ответ: Ио."
+    "explanation": "Ио дополняет четвёрку крупнейших спутников Юпитера: Ио, Европа, Ганимед и Каллисто."
   },
   {
     "id": 59,
@@ -892,7 +872,7 @@ export const questions: Question[] = [
       "o-merkuriy"
     ],
     "correct": "o-saturn",
-    "explanation": "Правильный ответ: Сатурн."
+    "explanation": "У Сатурна есть множество спутников. У Венеры и Меркурия естественных спутников нет."
   },
   {
     "id": 60,
@@ -909,7 +889,7 @@ export const questions: Question[] = [
       "o-mars"
     ],
     "correct": "o-yupiter",
-    "explanation": "Правильный ответ: Юпитер."
+    "explanation": "Кольца есть у всех четырёх планет-гигантов — Юпитера, Сатурна, Урана и Нептуна."
   },
   {
     "id": 61,
@@ -922,7 +902,7 @@ export const questions: Question[] = [
       "o-aleksey-leonov"
     ],
     "correct": "o-yuriy-gagarin",
-    "explanation": "Правильный ответ: Юрий Гагарин."
+    "explanation": "Юрий Гагарин первым из людей полетел в космос 12 апреля 1961 года на корабле «Восток-1»."
   },
   {
     "id": 62,
@@ -935,7 +915,7 @@ export const questions: Question[] = [
       "o-kapustin-yar"
     ],
     "correct": "o-baykonur",
-    "explanation": "Правильный ответ: Байконур."
+    "explanation": "Корабль «Восток-1» с Юрием Гагариным стартовал с космодрома Байконур."
   },
   {
     "id": 63,
@@ -948,12 +928,12 @@ export const questions: Question[] = [
       "o-soyuz"
     ],
     "correct": "o-vostok-6",
-    "explanation": "Правильный ответ: Восток-6."
+    "explanation": "Валентина Терешкова совершила свой космический полёт в июне 1963 года на корабле «Восток-6»."
   },
   {
     "id": 64,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-yuriy-gagarin",
       "o-valentina-tereshkova",
@@ -961,12 +941,12 @@ export const questions: Question[] = [
       "o-baykonur"
     ],
     "correct": "o-baykonur",
-    "explanation": "Правильный ответ: Байконур."
+    "explanation": "Юрий Гагарин, Валентина Терешкова и Алексей Леонов — космонавты. Байконур — космодром, то есть место запуска ракет."
   },
   {
     "id": 65,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-vostok-1",
       "o-vostok-6",
@@ -974,12 +954,12 @@ export const questions: Question[] = [
       "o-yuriy-gagarin"
     ],
     "correct": "o-yuriy-gagarin",
-    "explanation": "Правильный ответ: Юрий Гагарин."
+    "explanation": "«Восток-1», «Восток-6» и «Восход-2» — космические корабли. Юрий Гагарин — человек и космонавт."
   },
   {
     "id": 66,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-baykonur",
       "o-vostochnyy",
@@ -987,12 +967,12 @@ export const questions: Question[] = [
       "o-soyuz"
     ],
     "correct": "o-soyuz",
-    "explanation": "Правильный ответ: Союз."
+    "explanation": "Байконур, Восточный и Плесецк — космодромы. «Союз» — семейство космических кораблей."
   },
   {
     "id": 67,
     "type": "sorting",
-    "prompt": "Распредели объекты: слева — космонавты, справа — космические корабли.",
+    "prompt": "Распредели: слева — космонавты, справа — космические корабли.",
     "options": [
       "o-yuriy-gagarin",
       "o-valentina-tereshkova",
@@ -1015,12 +995,12 @@ export const questions: Question[] = [
       "o-vostok-1": "right",
       "o-vostok-6": "right"
     },
-    "explanation": "Правильный ответ: Юрий Гагарин — слева; Валентина Терешкова — слева; Восток-1 — справа; Восток-6 — справа."
+    "explanation": "Юрий Гагарин и Валентина Терешкова — люди-космонавты. «Восток-1» и «Восток-6» — корабли, на которых летали в космос."
   },
   {
     "id": 68,
     "type": "sorting",
-    "prompt": "Распредели объекты: слева — космодромы, справа — космические корабли.",
+    "prompt": "Распредели: слева — космодромы, справа — космические корабли.",
     "options": [
       "o-baykonur",
       "o-vostochnyy",
@@ -1043,12 +1023,12 @@ export const questions: Question[] = [
       "o-soyuz": "right",
       "o-buran": "right"
     },
-    "explanation": "Правильный ответ: Байконур — слева; Восточный — слева; Союз — справа; Буран — справа."
+    "explanation": "Байконур и Восточный — места запуска ракет. «Союз» и «Буран» — космические корабли."
   },
   {
     "id": 69,
     "type": "sorting",
-    "prompt": "Распредели объекты: слева — советские, справа — американские.",
+    "prompt": "Распредели: слева — советские, справа — американские.",
     "options": [
       "o-yuriy-gagarin",
       "o-vostok-1",
@@ -1071,7 +1051,7 @@ export const questions: Question[] = [
       "o-nil-armstrong": "right",
       "o-apollon-11": "right"
     },
-    "explanation": "Правильный ответ: Юрий Гагарин — слева; Восток-1 — слева; Нил Армстронг — справа; Аполлон-11 — справа."
+    "explanation": "Юрий Гагарин и «Восток-1» относятся к советской космонавтике. Нил Армстронг и «Аполлон-11» — к американской."
   },
   {
     "id": 70,
@@ -1083,8 +1063,7 @@ export const questions: Question[] = [
       "o-voshod-2",
       "o-apollon-11"
     ],
-    "correct": "o-vostok-1,o-vostok-6,o-voshod-2,o-apollon-11",
-    "explanation": "Правильный ответ: Восток-1 → Восток-6 → Восход-2 → Аполлон-11."
+    "correct": "o-vostok-1,o-vostok-6,o-voshod-2,o-apollon-11"
   },
   {
     "id": 71,
@@ -1096,8 +1075,7 @@ export const questions: Question[] = [
       "o-apollon-11",
       "o-buran"
     ],
-    "correct": "o-vostok-6,o-voshod-2,o-apollon-11,o-buran",
-    "explanation": "Правильный ответ: Восток-6 → Восход-2 → Аполлон-11 → Буран."
+    "correct": "o-vostok-6,o-voshod-2,o-apollon-11,o-buran"
   },
   {
     "id": 72,
@@ -1109,34 +1087,30 @@ export const questions: Question[] = [
       "o-aleksey-leonov",
       "o-nil-armstrong"
     ],
-    "correct": "o-yuriy-gagarin,o-valentina-tereshkova,o-aleksey-leonov,o-nil-armstrong",
-    "explanation": "Правильный ответ: Юрий Гагарин → Валентина Терешкова → Алексей Леонов → Нил Армстронг."
+    "correct": "o-yuriy-gagarin,o-valentina-tereshkova,o-aleksey-leonov,o-nil-armstrong"
   },
   {
     "id": 73,
     "type": "true_false",
     "prompt": "Юрий Гагарин стартовал в космос с Байконура.",
-    "correct": true,
-    "explanation": "Правильный ответ: правда."
+    "correct": true
   },
   {
     "id": 74,
     "type": "true_false",
     "prompt": "Валентина Терешкова стала первой женщиной в космосе.",
-    "correct": true,
-    "explanation": "Правильный ответ: правда."
+    "correct": true
   },
   {
     "id": 75,
     "type": "true_false",
     "prompt": "Во время единственного орбитального полёта «Бурана» на борту находился экипаж.",
-    "correct": false,
-    "explanation": "Правильный ответ: ложь."
+    "correct": false
   },
   {
     "id": 76,
     "type": "missing_item",
-    "prompt": "Какой человек дополнит группу людей, совершивших знаменитые первые достижения в космосе: Юрий Гагарин, Валентина Терешкова, Алексей Леонов, ?",
+    "prompt": "Кто дополнит группу людей, совершивших знаменитые первые достижения в космосе: Юрий Гагарин, Валентина Терешкова, Алексей Леонов, ?",
     "sequence": [
       "o-yuriy-gagarin",
       "o-valentina-tereshkova",
@@ -1144,16 +1118,16 @@ export const questions: Question[] = [
     ],
     "candidates": [
       "o-nil-armstrong",
-      "o-baykonur",
-      "o-vostok-1"
+      "o-aleksandr-pushkin",
+      "o-petr-chaykovskiy"
     ],
     "correct": "o-nil-armstrong",
-    "explanation": "Правильный ответ: Нил Армстронг."
+    "explanation": "Нил Армстронг первым ступил на Луну. Он дополняет группу людей, совершивших знаменитые первые достижения в космосе."
   },
   {
     "id": 77,
     "type": "missing_item",
-    "prompt": "Какой объект тоже относится к пилотируемым космическим кораблям: Восток-1, Восток-6, Восход-2, ?",
+    "prompt": "Что тоже относится к пилотируемым космическим кораблям: Восток-1, Восток-6, Восход-2, ?",
     "sequence": [
       "o-vostok-1",
       "o-vostok-6",
@@ -1165,12 +1139,12 @@ export const questions: Question[] = [
       "o-habbl"
     ],
     "correct": "o-soyuz",
-    "explanation": "Правильный ответ: Союз."
+    "explanation": "«Союз» — пилотируемый космический корабль. «Спутник-1» был автоматическим спутником, а «Хаббл» — космический телескоп."
   },
   {
     "id": 78,
     "type": "missing_item",
-    "prompt": "Какой объект дополнит группу космодромов: Байконур, Плесецк, Восточный, ?",
+    "prompt": "Что дополнит группу космодромов: Байконур, Плесецк, Восточный, ?",
     "sequence": [
       "o-baykonur",
       "o-plesetsk",
@@ -1182,7 +1156,7 @@ export const questions: Question[] = [
       "o-soyuz"
     ],
     "correct": "o-kapustin-yar",
-    "explanation": "Правильный ответ: Капустин Яр."
+    "explanation": "Капустин Яр — космодром, как Байконур, Плесецк и Восточный. «Буран» и «Союз» — космические корабли."
   }
 ]
 

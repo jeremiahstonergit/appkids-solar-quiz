@@ -2,7 +2,7 @@ import type { Difficulty, Mechanic } from '../types/quiz'
 import { questions } from './questions'
 
 export const difficultyMeta: Record<Difficulty, { label: string; age: string; description: string }> = {
-  1: { label: 'Легкий', age: '2–4 года', description: 'Знакомые объекты и простые факты' },
+  1: { label: 'Лёгкий', age: '2–4 года', description: 'Знакомые объекты и простые факты' },
   2: { label: 'Средний', age: '4–6 лет', description: 'Свойства, сравнения и классификация' },
   3: { label: 'Сложный', age: '6+ лет', description: 'История, хронология и сложные связи' },
 }

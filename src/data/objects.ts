@@ -233,6 +233,21 @@ const list: QuizObject[] = [
     "tone": 6
   },
   {
+    "id": "o-sirius",
+    "label": "Сириус",
+    "tone": 7
+  },
+  {
+    "id": "o-aleksandr-pushkin",
+    "label": "Александр Пушкин",
+    "tone": 0
+  },
+  {
+    "id": "o-petr-chaykovskiy",
+    "label": "Пётр Чайковский",
+    "tone": 1
+  },
+  {
     "id": "o-6",
     "label": "6",
     "tone": 7

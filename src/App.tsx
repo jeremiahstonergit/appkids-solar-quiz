@@ -149,7 +149,7 @@ export default function App() {
       {q.type==='sorting'&&<Sorting q={q} value={current as Record<string,string>} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
       {q.type==='ranking'&&<Ranking q={q} value={current as string[]} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
       {q.type==='true_false'&&<div className="truth-grid"><button className={`truth yes ${checked?(q.correct===true?'right':current===true?'wrong':''):''} ${current===true?'selected':''}`} disabled={checked} onClick={()=>setAnswer(true)}>✓<span>Правда</span></button><button className={`truth no ${checked?(q.correct===false?'right':current===false?'wrong':''):''} ${current===false?'selected':''}`} disabled={checked} onClick={()=>setAnswer(false)}>×<span>Ложь</span></button></div>}
-      {checked&&<div className={`feedback ${isCorrect()?'success':'error'}`}><b>{isCorrect()?'Верно!':'Почти!'}</b><span>{q.explanation}</span></div>}
+      {checked&&<div className={`feedback ${isCorrect()?'success':'error'}`}><b>{isCorrect()?'Верно!':'Разберёмся!'}</b>{q.explanation&&<span>{q.explanation}</span>}</div>}
       {(checked||(q.type!=='sorting'&&q.type!=='ranking'&&q.type!=='missing_item'))&&<button className="primary action" disabled={!checked&&!canCheck} onClick={checked?next:submit}>{checked?(index===sessionQuestions.length-1?'Узнать результат':'Дальше →'):'Проверить'}</button>}
     </section></div></main>
 }
