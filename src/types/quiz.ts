@@ -11,5 +11,5 @@ export type Question = {
   candidates?: string[]
   categories?: { id: string; label: string }[]
   assignments?: Record<string, string>
-  explanation: string
+  explanation?: string
 }
