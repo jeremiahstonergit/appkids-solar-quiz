@@ -1,8 +1,9 @@
 import { type DragEvent, type PointerEvent as ReactPointerEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { asset } from './constants/assets'
 import { objects } from './data/objects'
-import { createQuiz, difficultyMeta, sortingCategories } from './data/difficulty'
-import type { Difficulty, Question } from './types/quiz'
+import { difficultyMeta, questionDifficulty, sortingCategories } from './data/difficulty'
+import { questions } from './data/questions'
+import type { Question } from './types/quiz'
 
 type Answer = string | boolean | Record<string, string> | string[]
 
@@ -106,7 +107,6 @@ function Ranking({ q, value, checked, setValue, onComplete }: { q:Question; valu
 }
 
 export default function App() {
-  const [selectedDifficulty,setSelectedDifficulty]=useState<Difficulty>()
   const [sessionQuestions,setSessionQuestions]=useState<Question[]>([])
   const [screen,setScreen]=useState<'start'|'quiz'|'finish'>('start')
   const [index,setIndex]=useState(0)
@@ -124,10 +124,8 @@ export default function App() {
     urls.forEach(url=>{const image=new Image();image.decoding='async';image.src=url})
   },[])
 
-  const startQuiz=(difficulty=selectedDifficulty)=>{
-    if(!difficulty)return
-    setSelectedDifficulty(difficulty)
-    setSessionQuestions(createQuiz(difficulty))
+  const startQuiz=()=>{
+    setSessionQuestions([...questions].sort((left,right)=>left.id-right.id))
     setScreen('quiz');setIndex(0);setAnswer(undefined);setChecked(false);setScore(0)
   }
   const initialAnswer=useMemo(()=>q?.type==='sorting'?{}:q?.type==='ranking'?Array(q.options?.length??0).fill(''):undefined,[q])
@@ -137,12 +135,12 @@ export default function App() {
   const submit=()=>{if(!canCheck)return;setChecked(true);if(isCorrect())setScore(s=>s+1)}
   const completeInteractive=(right:boolean)=>{if(checked)return;setChecked(true);if(right)setScore(s=>s+1)}
   const next=()=>{if(index===sessionQuestions.length-1){setScreen('finish');return}setIndex(i=>i+1);setAnswer(undefined);setChecked(false)}
-  const restart=()=>startQuiz(selectedDifficulty)
+  const restart=startQuiz
 
-  if(screen==='start') return <main className="screen start"><div className="start-content"><p className="eyebrow">Космическая викторина</p><h1>Солнечная<br/>система</h1><p className="subtitle">Выбери уровень сложности</p><div className="difficulty-grid">{([1,2,3] as Difficulty[]).map(level=>{const meta=difficultyMeta[level];return <button key={level} className={`difficulty-card level-${level} ${selectedDifficulty===level?'selected':''}`} onClick={()=>setSelectedDifficulty(level)}><b>{meta.label}</b><span>{meta.age}</span><small>{meta.description}</small></button>})}</div><img className="hero difficulty-hero" src={asset('heroes','hero_start_solar_system.png')} alt="Космический герой"/><button className="primary" disabled={!selectedDifficulty} onClick={()=>startQuiz()}>Начать <span>→</span></button><p className="session-note">12 вопросов · по 2 задания каждого типа</p></div></main>
-  if(screen==='finish') return <main className="screen finish"><div className="finish-card"><img src={asset('heroes','hero_finish_success.png')} alt="Победа"/><p className="eyebrow">Миссия выполнена!</p><h1>{score} из {sessionQuestions.length}</h1><p>{selectedDifficulty&&`${difficultyMeta[selectedDifficulty].label} · ${difficultyMeta[selectedDifficulty].age}`}</p><p>{score>=10?'Ты настоящий знаток космоса!':score>=7?'Отличный полёт!':'Хорошее начало, исследователь!'}</p><button className="primary" onClick={restart}>Пройти ещё раз ↻</button><button className="secondary" onClick={()=>setScreen('start')}>Выбрать другой уровень</button></div></main>
+  if(screen==='start') return <main className="screen start"><div className="start-content"><p className="eyebrow">Режим отладки</p><h1>Проверка<br/>вопросов</h1><p className="subtitle">Все вопросы по порядку, без случайной выборки</p><img className="hero difficulty-hero" src={asset('heroes','hero_start_solar_system.png')} alt="Космический герой"/><button className="primary" onClick={startQuiz}>Начать проверку <span>→</span></button><p className="session-note">78 вопросов · ID 1–78 · все уровни сложности</p></div></main>
+  if(screen==='finish') return <main className="screen finish"><div className="finish-card"><img src={asset('heroes','hero_finish_success.png')} alt="Победа"/><p className="eyebrow">Проверка завершена</p><h1>{score} из {sessionQuestions.length}</h1><p>Все вопросы пройдены по порядку.</p><button className="primary" onClick={restart}>Проверить ещё раз ↻</button><button className="secondary" onClick={()=>setScreen('start')}>На стартовый экран</button></div></main>
 
-  return <main className="screen quiz"><div className="quiz-shell"><header><button className="home" aria-label="На главную" onClick={()=>setScreen('start')}>⌂</button><div className="progress-wrap"><div className="progress-meta"><span>Вопрос {index+1}{selectedDifficulty?` · ${difficultyMeta[selectedDifficulty].label}`:''}</span><b>{index+1} из {sessionQuestions.length}</b></div><div className="progress"><i style={{width:`${(index+1)/sessionQuestions.length*100}%`}}/></div></div></header>
+  return <main className="screen quiz"><div className="quiz-shell"><header><button className="home" aria-label="На главную" onClick={()=>setScreen('start')}>⌂</button><div className="progress-wrap"><div className="progress-meta"><span>ID {q.id} · {difficultyMeta[questionDifficulty[q.id]].label} · {difficultyMeta[questionDifficulty[q.id]].age}</span><b>{index+1} из {sessionQuestions.length}</b></div><div className="progress"><i style={{width:`${(index+1)/sessionQuestions.length*100}%`}}/></div></div></header>
     <section className="question-card"><span className="mechanic">{({multiple_choice:'Выбери ответ',odd_one_out:'Найди лишнее',missing_item:'Продолжи ряд',sorting:'Разложи по группам',ranking:'Выстрой порядок',true_false:'Правда или ложь'})[q.type]}</span><h2>{q.prompt}</h2>
       {(q.type==='multiple_choice'||q.type==='odd_one_out')&&<Choice q={q} value={current as string} checked={checked} setValue={setAnswer}/>} 
       {q.type==='missing_item'&&<Missing q={q} value={current as string} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
