@@ -7,9 +7,9 @@ export const questions: Question[] = [
     "prompt": "Какая звезда находится в центре Солнечной системы?",
     "options": [
       "o-solntse",
-      "o-luna",
-      "o-yupiter",
-      "o-venera"
+      "o-sirius",
+      "o-polyarnaya-zvezda",
+      "o-antares"
     ],
     "correct": "o-solntse",
     "explanation": "Солнце — звезда в центре нашей системы. Все планеты, включая Землю, движутся вокруг него."
@@ -134,7 +134,7 @@ export const questions: Question[] = [
   {
     "id": 11,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-merkuriy",
       "o-venera",
@@ -147,7 +147,7 @@ export const questions: Question[] = [
   {
     "id": 12,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-zemlya",
       "o-mars",
@@ -212,7 +212,7 @@ export const questions: Question[] = [
   {
     "id": 17,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-solntse",
       "o-yupiter",
@@ -220,7 +220,7 @@ export const questions: Question[] = [
       "o-neptun"
     ],
     "correct": "o-solntse",
-    "explanation": "Солнце — звезда: оно само излучает свет. Юпитер, Сатурн и Нептун — планеты."
+    "explanation": "Солнце — звезда, а Юпитер, Сатурн и Нептун — планеты."
   },
   {
     "id": 18,
@@ -320,7 +320,7 @@ export const questions: Question[] = [
   {
     "id": 23,
     "type": "sorting",
-    "prompt": "Распредели объекты: слева — каменистые планеты, справа — планеты-гиганты.",
+    "prompt": "Распредели: слева — каменистые планеты, справа — планеты-гиганты.",
     "options": [
       "o-mars",
       "o-yupiter",
@@ -376,7 +376,7 @@ export const questions: Question[] = [
   {
     "id": 25,
     "type": "sorting",
-    "prompt": "Распредели объекты: слева — вращаются вокруг Солнца, справа — вращаются вокруг планеты.",
+    "prompt": "Распредели: слева — планеты, справа — спутники.",
     "options": [
       "o-mars",
       "o-luna",
@@ -516,7 +516,7 @@ export const questions: Question[] = [
   {
     "id": 30,
     "type": "sorting",
-    "prompt": "Распредели объекты: слева — звёзды, справа — не звёзды.",
+    "prompt": "Распредели: слева — звёзды, справа — не звёзды.",
     "options": [
       "o-solntse",
       "o-zemlya",
@@ -1175,4 +1175,3 @@ const mechanics = ['multiple_choice', 'odd_one_out', 'missing_item', 'sorting', 
 export const createQuiz = () => shuffle(mechanics.flatMap(type =>
   shuffle(questions.filter(question => question.type === type)).slice(0, 2),
 ))
-
