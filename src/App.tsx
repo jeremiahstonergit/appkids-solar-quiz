@@ -7,6 +7,27 @@ import type { Question } from './types/quiz'
 
 type Answer = string | boolean | Record<string, string> | string[]
 
+const shuffle = <T,>(items: T[]) => {
+  const result = [...items]
+  for (let index = result.length - 1; index > 0; index--) {
+    const randomIndex = Math.floor(Math.random() * (index + 1))
+    ;[result[index], result[randomIndex]] = [result[randomIndex], result[index]]
+  }
+  return result
+}
+
+const debugQuestions=[...questions].sort((left,right)=>left.id-right.id)
+const questionIndexFromUrl=()=>{
+  const id=Number(new URLSearchParams(window.location.search).get('id'))
+  return Number.isInteger(id)?debugQuestions.findIndex(question=>question.id===id):-1
+}
+const replaceQuestionInUrl=(id?:number)=>{
+  const url=new URL(window.location.href)
+  if(id===undefined)url.searchParams.delete('id')
+  else url.searchParams.set('id',String(id))
+  window.history.replaceState(null,'',url)
+}
+
 const ObjectCard = ({ id, selected, state, onClick, compact = false, draggable = false, onDragStart, onPointerDrop }: { id: string; selected?: boolean; state?: 'right'|'wrong'; onClick?: () => void; compact?: boolean; draggable?: boolean; onDragStart?: (event: DragEvent<HTMLButtonElement>) => void; onPointerDrop?: (dropId:string)=>void }) => {
   const item = objects[id]
   const numeric = !item.file && /^\d+$/.test(item.label)
@@ -48,45 +69,49 @@ const ObjectCard = ({ id, selected, state, onClick, compact = false, draggable =
 }
 
 function Choice({ q, value, checked, setValue }: { q: Question; value?: string; checked: boolean; setValue: (v:string)=>void }) {
-  return <div className="choice-grid">{q.options!.map(id => <ObjectCard key={id} id={id} selected={value===id}
+  const options=useMemo(()=>shuffle(q.options!),[q])
+  return <div className="choice-grid">{options.map(id => <ObjectCard key={id} id={id} selected={value===id}
     state={checked ? id===q.correct ? 'right' : value===id ? 'wrong' : undefined : undefined}
     onClick={checked ? undefined : () => setValue(id)} />)}</div>
 }
 
 function Missing({ q, value, checked, setValue, onComplete }: { q: Question; value?: string; checked: boolean; setValue:(v:string)=>void; onComplete:(right:boolean)=>void }) {
+  const candidates=useMemo(()=>shuffle(q.candidates!),[q])
   const place=(id:string)=>{if(checked||!q.candidates!.includes(id))return;setValue(id);onComplete(id===q.correct)}
   const drop = (event: DragEvent<HTMLDivElement>) => { event.preventDefault(); event.currentTarget.classList.remove('drag-over'); place(event.dataTransfer.getData('text/plain')) }
   return <div className="missing-game"><p className="hint">Перетащи подходящий объект в пустое место.</p><div className="sequence">{q.sequence!.map(id=><ObjectCard key={id} id={id} compact />)}<div data-drop-id="missing" className={`missing-slot ${value ? 'filled' : ''} ${checked?(value===q.correct?'right':'wrong'):''}`} onDragOver={event=>{event.preventDefault();event.currentTarget.classList.add('drag-over')}} onDragLeave={event=>event.currentTarget.classList.remove('drag-over')} onDrop={drop}>{value ? <ObjectCard id={value} compact state={value===q.correct?'right':'wrong'}/> : <><b>?</b><small>Перетащи сюда</small></>}</div></div>
-    <div className="choice-grid three missing-candidates">{q.candidates!.map(id=><ObjectCard key={id} id={id} draggable={!checked} onDragStart={e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}} onPointerDrop={dropId=>{if(dropId==='missing')place(id)}} selected={value===id} state={checked?id===q.correct?'right':value===id?'wrong':undefined:undefined} onClick={checked?undefined:()=>place(id)} />)}</div></div>
+    <div className="choice-grid three missing-candidates">{candidates.map(id=><ObjectCard key={id} id={id} draggable={!checked} onDragStart={e=>{e.dataTransfer.setData('text/plain',id);e.dataTransfer.effectAllowed='move'}} onPointerDrop={dropId=>{if(dropId==='missing')place(id)}} selected={value===id} state={checked?id===q.correct?'right':value===id?'wrong':undefined:undefined} onClick={checked?undefined:()=>place(id)} />)}</div></div>
 }
 
 function Sorting({ q, value, checked, setValue, onComplete }: { q:Question; value:Record<string,string>; checked:boolean; setValue:(v:Record<string,string>)=>void; onComplete:(right:boolean)=>void }) {
+  const options=useMemo(()=>shuffle(q.options!),[q])
   const [active,setActive]=useState(0)
   const [feedback,setFeedback]=useState<boolean|undefined>()
   const [chosen,setChosen]=useState<string>()
   const timer=useRef<ReturnType<typeof setTimeout>|undefined>(undefined)
   const categories=sortingCategories[q.id] ?? q.categories!
   useEffect(()=>{setActive(0);setFeedback(undefined);setChosen(undefined);return()=>{if(timer.current)clearTimeout(timer.current)}},[q.id])
-  const id=q.options![active]
+  const id=options[active]
   const place=(category:string)=>{
     if(checked||feedback!==undefined||!categories.some(item=>item.id===category))return
     const next={...value,[id]:category}
     const right=q.assignments![id]===category
     setValue(next);setChosen(category);setFeedback(right)
     timer.current=setTimeout(()=>{
-      if(active===q.options!.length-1)onComplete(q.options!.every(item=>next[item]===q.assignments![item]))
+      if(active===options.length-1)onComplete(options.every(item=>next[item]===q.assignments![item]))
       else{setActive(index=>index+1);setFeedback(undefined);setChosen(undefined)}
     },650)
   }
   const nativeDrop=(event:DragEvent<HTMLElement>,category:string)=>{event.preventDefault();place(category)}
   const zone=(category:{id:string;label:string},index:number)=><section key={category.id} data-drop-id={category.id} className={`sort-zone side-zone ${chosen===category.id?(feedback?'right':'wrong'):''}`} onClick={()=>place(category.id)} onDragOver={event=>{event.preventDefault();event.currentTarget.classList.add('drag-over')}} onDragLeave={event=>event.currentTarget.classList.remove('drag-over')} onDrop={event=>{event.currentTarget.classList.remove('drag-over');nativeDrop(event,category.id)}}><span className="zone-arrow">{index===0?'←':'→'}</span><h3>{category.label}</h3></section>
-  return <div className="sorting-round"><div className="round-progress"><b>{active+1}</b><span>из {q.options!.length}</span><i style={{width:`${(active+1)/q.options!.length*100}%`}}/></div>
+  return <div className="sorting-round"><div className="round-progress"><b>{active+1}</b><span>из {options.length}</span><i style={{width:`${(active+1)/options.length*100}%`}}/></div>
     <p className="hint">Перетащи объект влево или вправо. Можно просто нажать на нужную область.</p>
     <div className="sorting-stage">{zone(categories[0],0)}<div className={`sort-current ${feedback!==undefined?'sort-object-gone':''}`}>{feedback===undefined&&<ObjectCard key={id} id={id} draggable={!checked} onDragStart={event=>{event.dataTransfer.setData('text/plain',id);event.dataTransfer.effectAllowed='move'}} onPointerDrop={place}/>}</div>{zone(categories[1],1)}</div>
   </div>
 }
 
 function Ranking({ q, value, checked, setValue, onComplete }: { q:Question; value:string[]; checked:boolean; setValue:(v:string[])=>void; onComplete:(right:boolean)=>void }) {
+  const options=useMemo(()=>shuffle(q.options!),[q])
   const [selected,setSelected]=useState<string>()
   const [errorSlot,setErrorSlot]=useState<number>()
   const [message,setMessage]=useState<'right'|'wrong'>()
@@ -99,7 +124,7 @@ function Ranking({ q, value, checked, setValue, onComplete }: { q:Question; valu
     if(next.every(Boolean))onComplete(true);else setTimeout(()=>setMessage(undefined),650)
   }
   const nativeDrop=(event:DragEvent<HTMLDivElement>,index:number)=>{event.preventDefault();place(event.dataTransfer.getData('text/plain'),index)}
-  const available=q.options!.filter(id=>!value.includes(id))
+  const available=options.filter(id=>!value.includes(id))
   return <div className="ranking-game"><p className="hint">Выбери объект и поставь в нужное место. Верные позиции закрепляются.</p>
     <div className="rank-slots-line">{correct.map((_,index)=><div key={index} data-drop-id={`rank-${index}`} className={`rank-slot ${value[index]?'right locked':''} ${errorSlot===index?'wrong shake':''}`} onClick={()=>selected&&place(selected,index)} onDragOver={event=>{event.preventDefault();event.currentTarget.classList.add('drag-over')}} onDragLeave={event=>event.currentTarget.classList.remove('drag-over')} onDrop={event=>{event.currentTarget.classList.remove('drag-over');nativeDrop(event,index)}}><b>{index+1}</b>{value[index]?<ObjectCard id={value[index]} compact state="right"/>:<span className="empty-rank">Перетащи сюда</span>}</div>)}</div>
     <div className="rank-pool">{available.map(id=><ObjectCard key={id} id={id} compact draggable={!checked} selected={selected===id} onClick={()=>setSelected(current=>current===id?undefined:id)} onDragStart={event=>{event.dataTransfer.setData('text/plain',id);event.dataTransfer.effectAllowed='move'}} onPointerDrop={dropId=>{if(dropId.startsWith('rank-'))place(id,Number(dropId.slice(5)))}}/>)}</div>
@@ -107,9 +132,10 @@ function Ranking({ q, value, checked, setValue, onComplete }: { q:Question; valu
 }
 
 export default function App() {
-  const [sessionQuestions,setSessionQuestions]=useState<Question[]>([])
-  const [screen,setScreen]=useState<'start'|'quiz'|'finish'>('start')
-  const [index,setIndex]=useState(0)
+  const [initialQuestionIndex]=useState(questionIndexFromUrl)
+  const [sessionQuestions,setSessionQuestions]=useState<Question[]>(()=>initialQuestionIndex>=0?debugQuestions:[])
+  const [screen,setScreen]=useState<'start'|'quiz'|'finish'>(()=>initialQuestionIndex>=0?'quiz':'start')
+  const [index,setIndex]=useState(()=>Math.max(initialQuestionIndex,0))
   const [answer,setAnswer]=useState<Answer | undefined>()
   const [checked,setChecked]=useState(false)
   const [score,setScore]=useState(0)
@@ -124,9 +150,11 @@ export default function App() {
     urls.forEach(url=>{const image=new Image();image.decoding='async';image.src=url})
   },[])
 
-  const startQuiz=()=>{
-    setSessionQuestions([...questions].sort((left,right)=>left.id-right.id))
-    setScreen('quiz');setIndex(0);setAnswer(undefined);setChecked(false);setScore(0)
+  useEffect(()=>{replaceQuestionInUrl(screen==='quiz'?q?.id:undefined)},[screen,q?.id])
+
+  const startQuiz=(questionIndex=0)=>{
+    setSessionQuestions(debugQuestions)
+    setScreen('quiz');setIndex(questionIndex);setAnswer(undefined);setChecked(false);setScore(0)
   }
   const initialAnswer=useMemo(()=>q?.type==='sorting'?{}:q?.type==='ranking'?Array(q.options?.length??0).fill(''):undefined,[q])
   const current=answer ?? initialAnswer
@@ -135,17 +163,17 @@ export default function App() {
   const submit=()=>{if(!canCheck)return;setChecked(true);if(isCorrect())setScore(s=>s+1)}
   const completeInteractive=(right:boolean)=>{if(checked)return;setChecked(true);if(right)setScore(s=>s+1)}
   const next=()=>{if(index===sessionQuestions.length-1){setScreen('finish');return}setIndex(i=>i+1);setAnswer(undefined);setChecked(false)}
-  const restart=startQuiz
+  const restart=()=>startQuiz()
 
-  if(screen==='start') return <main className="screen start"><div className="start-content"><p className="eyebrow">Режим отладки</p><h1>Проверка<br/>вопросов</h1><p className="subtitle">Все вопросы по порядку, без случайной выборки</p><img className="hero difficulty-hero" src={asset('heroes','hero_start_solar_system.png')} alt="Космический герой"/><button className="primary" onClick={startQuiz}>Начать проверку <span>→</span></button><p className="session-note">{questions.length} вопросов · по возрастанию ID · все уровни сложности</p></div></main>
+  if(screen==='start') return <main className="screen start"><div className="start-content"><p className="eyebrow">Режим отладки</p><h1>Проверка<br/>вопросов</h1><p className="subtitle">Все вопросы по порядку, без случайной выборки</p><img className="hero difficulty-hero" src={asset('heroes','hero_start_solar_system.png')} alt="Космический герой"/><button className="primary" onClick={()=>startQuiz()}>Начать проверку <span>→</span></button><p className="session-note">{questions.length} вопросов · по возрастанию ID · все уровни сложности</p></div></main>
   if(screen==='finish') return <main className="screen finish"><div className="finish-card"><img src={asset('heroes','hero_finish_success.png')} alt="Победа"/><p className="eyebrow">Проверка завершена</p><h1>{score} из {sessionQuestions.length}</h1><p>Все вопросы пройдены по порядку.</p><button className="primary" onClick={restart}>Проверить ещё раз ↻</button><button className="secondary" onClick={()=>setScreen('start')}>На стартовый экран</button></div></main>
 
   return <main className="screen quiz"><div className="quiz-shell"><header><button className="home" aria-label="На главную" onClick={()=>setScreen('start')}>⌂</button><div className="progress-wrap"><div className="progress-meta"><span>ID {q.id} · {difficultyMeta[questionDifficulty[q.id]].label} · {difficultyMeta[questionDifficulty[q.id]].age}</span><b>{index+1} из {sessionQuestions.length}</b></div><div className="progress"><i style={{width:`${(index+1)/sessionQuestions.length*100}%`}}/></div></div></header>
     <section className="question-card"><span className="mechanic">{({multiple_choice:'Выбери ответ',odd_one_out:'Найди лишнее',missing_item:'Продолжи ряд',sorting:'Разложи по группам',ranking:'Выстрой порядок',true_false:'Правда или ложь'})[q.type]}</span><h2>{q.prompt}</h2>
-      {(q.type==='multiple_choice'||q.type==='odd_one_out')&&<Choice q={q} value={current as string} checked={checked} setValue={setAnswer}/>} 
-      {q.type==='missing_item'&&<Missing q={q} value={current as string} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
-      {q.type==='sorting'&&<Sorting q={q} value={current as Record<string,string>} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
-      {q.type==='ranking'&&<Ranking q={q} value={current as string[]} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
+      {(q.type==='multiple_choice'||q.type==='odd_one_out')&&<Choice key={q.id} q={q} value={current as string} checked={checked} setValue={setAnswer}/>} 
+      {q.type==='missing_item'&&<Missing key={q.id} q={q} value={current as string} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
+      {q.type==='sorting'&&<Sorting key={q.id} q={q} value={current as Record<string,string>} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
+      {q.type==='ranking'&&<Ranking key={q.id} q={q} value={current as string[]} checked={checked} setValue={setAnswer} onComplete={completeInteractive}/>} 
       {q.type==='true_false'&&<div className="truth-grid"><button className={`truth yes ${checked?(q.correct===true?'right':current===true?'wrong':''):''} ${current===true?'selected':''}`} disabled={checked} onClick={()=>setAnswer(true)}>✓<span>Правда</span></button><button className={`truth no ${checked?(q.correct===false?'right':current===false?'wrong':''):''} ${current===false?'selected':''}`} disabled={checked} onClick={()=>setAnswer(false)}>×<span>Ложь</span></button></div>}
       {checked&&<div className={`feedback ${isCorrect()?'success':'error'}`}><b>{isCorrect()?'Верно!':'Разберёмся!'}</b>{q.explanation&&<span>{q.explanation}</span>}</div>}
       {(checked||(q.type!=='sorting'&&q.type!=='ranking'&&q.type!=='missing_item'))&&<button className="primary action" disabled={!checked&&!canCheck} onClick={checked?next:submit}>{checked?(index===sessionQuestions.length-1?'Узнать результат':'Дальше →'):'Проверить'}</button>}
