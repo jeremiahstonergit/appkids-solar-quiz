@@ -671,7 +671,8 @@ export const questions: Question[] = [
     "id": 42,
     "type": "true_false",
     "prompt": "Меркурий — самая горячая планета Солнечной системы.",
-    "correct": false
+    "correct": false,
+    "explanation": "Самая горячая планета — Венера: её плотная атмосфера удерживает тепло сильнее, чем Меркурий."
   },
   {
     "id": 43,
@@ -683,7 +684,8 @@ export const questions: Question[] = [
     "id": 44,
     "type": "true_false",
     "prompt": "У Венеры есть естественные спутники.",
-    "correct": false
+    "correct": false,
+    "explanation": "У Венеры нет естественных спутников."
   },
   {
     "id": 45,
@@ -695,7 +697,8 @@ export const questions: Question[] = [
     "id": 46,
     "type": "true_false",
     "prompt": "Сатурн — единственная планета с кольцами.",
-    "correct": false
+    "correct": false,
+    "explanation": "Кольца есть не только у Сатурна, но и у Юпитера, Урана и Нептуна."
   },
   {
     "id": 47,
@@ -713,7 +716,8 @@ export const questions: Question[] = [
     "id": 49,
     "type": "true_false",
     "prompt": "Нептун ближе к Солнцу, чем Уран.",
-    "correct": false
+    "correct": false,
+    "explanation": "Уран — седьмая планета от Солнца, а Нептун — восьмая, поэтому Нептун находится дальше."
   },
   {
     "id": 50,
@@ -1105,7 +1109,8 @@ export const questions: Question[] = [
     "id": 75,
     "type": "true_false",
     "prompt": "Во время единственного орбитального полёта «Бурана» на борту находился экипаж.",
-    "correct": false
+    "correct": false,
+    "explanation": "Единственный орбитальный полёт «Бурана» прошёл полностью автоматически, без экипажа."
   },
   {
     "id": 76,
