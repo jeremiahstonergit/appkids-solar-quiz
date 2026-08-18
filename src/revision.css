@@ -6,6 +6,15 @@
 
 .object-card .image-shell{overflow:hidden}.object-card .image-shell img{object-fit:contain}.object-label{position:relative;z-index:2}
 
+/* Semantic truth/false controls: keep the labels neutral and color the icons. */
+.truth.yes{color:#72efb9;border-color:#47d89b66;background:#47d89b12}.truth.no{color:#ff8395;border-color:#ff6c8166;background:#ff6c8112}.truth.yes span,.truth.no span{color:#fff}.truth.yes.selected{border-color:var(--green);background:#47d89b2c;box-shadow:0 0 0 4px #47d89b18}.truth.no.selected{border-color:var(--red);background:#ff6c812c;box-shadow:0 0 0 4px #ff6c8118}
+
+/* The slot already owns the answer border; remove the nested card frame. */
+.missing-slot.filled{padding:0}.missing-slot.filled>.object-card{width:100%;height:100%;margin:0;border:0!important;border-radius:15px;background:transparent!important;box-shadow:none!important}.missing-slot.filled>.object-card .image-shell{margin-inline:auto}
+
+/* Keep every current sorting object centered, regardless of image or label width. */
+.sorting-stage .sort-current{display:flex;align-items:center;justify-content:center;justify-self:center;min-width:0}.sorting-stage .sort-current>.object-card{width:100%;max-width:190px;margin:0}.sorting-stage .sort-current .image-shell{margin-inline:auto}
+
 @media(max-width:600px){.difficulty-grid{grid-template-columns:1fr}.difficulty-card{display:grid;grid-template-columns:1fr auto;grid-template-areas:'label age' 'desc desc';text-align:left;align-items:center;padding:10px 14px}.difficulty-card b{grid-area:label;justify-self:start}.difficulty-card span{grid-area:age}.difficulty-card small{grid-area:desc;justify-self:start}.difficulty-hero{height:min(23vh,190px)}.numeric-card .numeric-shell{height:100px}.object-card.numeric-card{min-height:122px}.sorting-stage .sort-zone{min-height:138px}.sort-object-gone{min-height:126px}}
 
 @media(orientation:landscape) and (max-height:800px){.difficulty-grid{grid-template-columns:repeat(3,1fr);margin:4px 0}.difficulty-card{display:flex;text-align:center;padding:7px}.difficulty-card small{display:none}.difficulty-hero{height:20vh}.sort-object-gone{min-height:90px}}
