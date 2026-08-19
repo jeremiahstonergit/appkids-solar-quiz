@@ -380,7 +380,7 @@ export const questions: Question[] = [
     "options": [
       "o-mars",
       "o-luna",
-      "o-pluton",
+      "o-venera",
       "o-titan"
     ],
     "categories": [
@@ -396,10 +396,10 @@ export const questions: Question[] = [
     "assignments": {
       "o-mars": "left",
       "o-luna": "right",
-      "o-pluton": "left",
+      "o-venera": "left",
       "o-titan": "right"
     },
-    "explanation": "Марс и Плутон движутся вокруг Солнца. Луна движется вокруг Земли, а Титан — вокруг Сатурна."
+    "explanation": "Марс и Венера — планеты. Луна — спутник Земли, а Титан — спутник Сатурна."
   },
   {
     "id": 26,
@@ -1164,19 +1164,3 @@ export const questions: Question[] = [
     "explanation": "Капустин Яр — космодром, как Байконур, Плесецк и Восточный. «Буран» и «Союз» — космические корабли."
   }
 ]
-
-const shuffle = <T,>(items: T[]) => {
-  const result = [...items]
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[result[i], result[j]] = [result[j], result[i]]
-  }
-  return result
-}
-
-const mechanics = ['multiple_choice', 'odd_one_out', 'missing_item', 'sorting', 'ranking', 'true_false'] as const
-
-/** Creates a fresh 12-question session with two random questions per mechanic. */
-export const createQuiz = () => shuffle(mechanics.flatMap(type =>
-  shuffle(questions.filter(question => question.type === type)).slice(0, 2),
-))

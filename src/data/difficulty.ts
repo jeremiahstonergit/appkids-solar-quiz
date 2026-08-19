@@ -1,4 +1,5 @@
 import type { Difficulty, Mechanic } from '../types/quiz'
+import { shuffle } from '../utils/shuffle'
 import { questions } from './questions'
 
 export const difficultyMeta: Record<Difficulty, { label: string; age: string; description: string }> = {
@@ -34,16 +35,7 @@ export const sortingCategories: Record<number, [{ id: 'left'; label: string }, {
   69: [{ id: 'left', label: 'Советские' }, { id: 'right', label: 'Американские' }],
 }
 
-const shuffle = <T,>(items: T[]) => {
-  const result = [...items]
-  for (let i = result.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[result[i], result[j]] = [result[j], result[i]]
-  }
-  return result
-}
-
-const mechanics: Mechanic[] = ['multiple_choice', 'odd_one_out', 'missing_item', 'sorting', 'ranking', 'true_false']
+export const mechanics: Mechanic[] = ['multiple_choice', 'odd_one_out', 'missing_item', 'sorting', 'ranking', 'true_false']
 
 export const createQuiz = (difficulty: Difficulty) => shuffle(mechanics.flatMap(type =>
   shuffle(questions.filter(question => question.type === type && questionDifficulty[question.id] === difficulty)).slice(0, 2),
