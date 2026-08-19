@@ -1,15 +1,45 @@
-export type Mechanic = 'multiple_choice' | 'odd_one_out' | 'missing_item' | 'sorting' | 'ranking' | 'true_false'
 export type Difficulty = 1 | 2 | 3
 export type QuizObject = { id: string; label: string; file?: string; tone?: number }
-export type Question = {
+
+type BaseQuestion = {
   id: number
-  type: Mechanic
   prompt: string
-  options?: string[]
-  correct?: string | boolean
-  sequence?: string[]
-  candidates?: string[]
-  categories?: { id: string; label: string }[]
-  assignments?: Record<string, string>
   explanation?: string
 }
+
+export type ChoiceQuestion = BaseQuestion & {
+  type: 'multiple_choice' | 'odd_one_out'
+  options: string[]
+  correct: string
+}
+
+export type MissingItemQuestion = BaseQuestion & {
+  type: 'missing_item'
+  sequence: string[]
+  candidates: string[]
+  correct: string
+}
+
+export type SortingCategory = { id: string; label: string }
+
+export type SortingQuestion = BaseQuestion & {
+  type: 'sorting'
+  options: string[]
+  categories: [SortingCategory, SortingCategory]
+  assignments: Record<string, string>
+}
+
+export type RankingQuestion = BaseQuestion & {
+  type: 'ranking'
+  options: string[]
+  correct: string
+}
+
+export type TrueFalseQuestion = BaseQuestion & {
+  type: 'true_false'
+  correct: boolean
+}
+
+export type Question = ChoiceQuestion | MissingItemQuestion | SortingQuestion | RankingQuestion | TrueFalseQuestion
+export type Mechanic = Question['type']
+export type Answer = string | boolean | Record<string, string> | string[]
