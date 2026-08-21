@@ -160,7 +160,7 @@ export const questions: Question[] = [
   {
     "id": 13,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-io",
       "o-evropa",
@@ -168,12 +168,12 @@ export const questions: Question[] = [
       "o-titan"
     ],
     "correct": "o-titan",
-    "explanation": "Ио, Европа и Ганимед вращаются вокруг Юпитера, а Титан — вокруг Сатурна."
+    "explanation": "Ио, Европа и Ганимед это спутники Юпитера, а Титан — спутник Сатурна."
   },
   {
     "id": 14,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-merkuriy",
       "o-venera",
@@ -186,7 +186,7 @@ export const questions: Question[] = [
   {
     "id": 15,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-yupiter",
       "o-saturn",
@@ -199,7 +199,7 @@ export const questions: Question[] = [
   {
     "id": 16,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-pluton",
       "o-tserera",
@@ -225,7 +225,7 @@ export const questions: Question[] = [
   {
     "id": 18,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-merkuriy",
       "o-mars",
@@ -238,7 +238,7 @@ export const questions: Question[] = [
   {
     "id": 19,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-evropa",
       "o-ganimed",
@@ -251,7 +251,7 @@ export const questions: Question[] = [
   {
     "id": 20,
     "type": "odd_one_out",
-    "prompt": "Что лишнее среди этих объектов?",
+    "prompt": "Что из этого лишнее?",
     "options": [
       "o-yupiter",
       "o-saturn",
@@ -292,7 +292,7 @@ export const questions: Question[] = [
   {
     "id": 22,
     "type": "sorting",
-    "prompt": "Распредели объекты: слева — планеты, справа — их спутники.",
+    "prompt": "Распредели: слева — планеты, справа — их спутники.",
     "options": [
       "o-zemlya",
       "o-luna",
@@ -348,7 +348,7 @@ export const questions: Question[] = [
   {
     "id": 24,
     "type": "sorting",
-    "prompt": "Распредели объекты: слева — планеты с кольцами, справа — планеты без колец.",
+    "prompt": "Распредели: слева — планеты с кольцами, справа — планеты без колец.",
     "options": [
       "o-saturn",
       "o-zemlya",
@@ -432,7 +432,7 @@ export const questions: Question[] = [
   {
     "id": 27,
     "type": "sorting",
-    "prompt": "Распредели объекты: слева — больше Земли, справа — меньше Земли.",
+    "prompt": "Распредели: слева — больше Земли, справа — меньше Земли.",
     "options": [
       "o-yupiter",
       "o-mars",
@@ -488,7 +488,7 @@ export const questions: Question[] = [
   {
     "id": 29,
     "type": "sorting",
-    "prompt": "Распредели объекты: слева — газовые гиганты, справа — остальные.",
+    "prompt": "Распредели: слева — газовые гиганты, справа — остальные.",
     "options": [
       "o-yupiter",
       "o-zemlya",
@@ -640,7 +640,7 @@ export const questions: Question[] = [
   {
     "id": 39,
     "type": "ranking",
-    "prompt": "Расставь объекты по размеру — от самого большого к самому маленькому.",
+    "prompt": "Расставь по размеру — от самого большого к самому маленькому.",
     "options": [
       "o-solntse",
       "o-yupiter",
@@ -745,7 +745,7 @@ export const questions: Question[] = [
   {
     "id": 52,
     "type": "missing_item",
-    "prompt": "Какой объект дополнит группу планет-гигантов: Юпитер, Сатурн, Уран, ?",
+    "prompt": "Что дополнит группу планет-гигантов: Юпитер, Сатурн, Уран, ?",
     "sequence": [
       "o-yupiter",
       "o-saturn",
@@ -762,7 +762,7 @@ export const questions: Question[] = [
   {
     "id": 53,
     "type": "missing_item",
-    "prompt": "Какой объект дополнит четвёрку больших спутников Юпитера: Ио, Европа, Ганимед, ?",
+    "prompt": "Что дополнит четвёрку больших спутников Юпитера: Ио, Европа, Ганимед, ?",
     "sequence": [
       "o-io",
       "o-evropa",
@@ -779,7 +779,7 @@ export const questions: Question[] = [
   {
     "id": 54,
     "type": "missing_item",
-    "prompt": "Какой объект тоже относится к естественным спутникам: Луна, Фобос, Титан, ?",
+    "prompt": "Что тоже относится к естественным спутникам: Луна, Фобос, Титан, ?",
     "sequence": [
       "o-luna",
       "o-fobos",
@@ -796,7 +796,7 @@ export const questions: Question[] = [
   {
     "id": 55,
     "type": "missing_item",
-    "prompt": "Какой объект тоже относится к карликовым планетам: Плутон, Церера, Эрида, ?",
+    "prompt": "Что тоже относится к карликовым планетам: Плутон, Церера, Эрида, ?",
     "sequence": [
       "o-pluton",
       "o-tserera",
@@ -813,7 +813,7 @@ export const questions: Question[] = [
   {
     "id": 56,
     "type": "missing_item",
-    "prompt": "Какой объект дополнит группу каменистых планет: Меркурий, Венера, Марс, ?",
+    "prompt": "Что дополнит группу каменистых планет: Меркурий, Венера, Марс, ?",
     "sequence": [
       "o-merkuriy",
       "o-venera",
@@ -830,7 +830,7 @@ export const questions: Question[] = [
   {
     "id": 57,
     "type": "missing_item",
-    "prompt": "Какой объект дополнит группу планет-гигантов: Юпитер, Сатурн, Нептун, ?",
+    "prompt": "Что дополнит группу планет-гигантов: Юпитер, Сатурн, Нептун, ?",
     "sequence": [
       "o-yupiter",
       "o-saturn",
@@ -847,7 +847,7 @@ export const questions: Question[] = [
   {
     "id": 58,
     "type": "missing_item",
-    "prompt": "Какой объект дополнит четвёрку больших спутников Юпитера: Европа, Ганимед, Каллисто, ?",
+    "prompt": "Что дополнит четвёрку больших спутников Юпитера: Европа, Ганимед, Каллисто, ?",
     "sequence": [
       "o-evropa",
       "o-ganimed",
@@ -864,7 +864,7 @@ export const questions: Question[] = [
   {
     "id": 59,
     "type": "missing_item",
-    "prompt": "Какой объект тоже относится к телам со спутниками: Земля, Марс, Юпитер, ?",
+    "prompt": "Что тоже относится к телам со спутниками: Земля, Марс, Юпитер, ?",
     "sequence": [
       "o-zemlya",
       "o-mars",
@@ -881,7 +881,7 @@ export const questions: Question[] = [
   {
     "id": 60,
     "type": "missing_item",
-    "prompt": "Какой объект тоже относится к планетам с кольцами: Сатурн, Уран, Нептун, ?",
+    "prompt": "Что тоже относится к планетам с кольцами: Сатурн, Уран, Нептун, ?",
     "sequence": [
       "o-saturn",
       "o-uran",

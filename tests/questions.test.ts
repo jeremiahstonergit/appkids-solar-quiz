@@ -58,6 +58,13 @@ describe('question bank', () => {
     }
   })
 
+  it('has explanations for false statements', () => {
+    for (const question of questions) {
+      if (question.type !== 'true_false' || question.correct) continue
+      expect(question.explanation?.trim(), `question ${question.id}`).toBeTruthy()
+    }
+  })
+
   it.each([1, 2, 3] as Difficulty[])('builds a 12-question level %s session with two questions of every mechanic', difficulty => {
     for (const mechanic of mechanics) {
       const available = questions.filter(question => question.type === mechanic && questionDifficulty[question.id] === difficulty)
