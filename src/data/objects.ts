@@ -148,11 +148,13 @@ const list: QuizObject[] = [
   {
     "id": "o-lunohod-1",
     "label": "Луноход-1",
+    "file": "lunokhod_1.png",
     "tone": 0
   },
   {
     "id": "o-voyadzher-1",
     "label": "Вояджер-1",
+    "file": "voyager_1.png",
     "tone": 1
   },
   {
@@ -164,6 +166,7 @@ const list: QuizObject[] = [
   {
     "id": "o-mks",
     "label": "МКС",
+    "file": "iss.png",
     "tone": 3
   },
   {
@@ -235,26 +238,31 @@ const list: QuizObject[] = [
   {
     "id": "o-sirius",
     "label": "Сириус",
+    "file": "sirius.png",
     "tone": 7
   },
   {
     "id": "o-polyarnaya-zvezda",
     "label": "Полярная звезда",
+    "file": "polaris.png",
     "tone": 2
   },
   {
     "id": "o-antares",
     "label": "Антарес",
+    "file": "antares.png",
     "tone": 3
   },
   {
     "id": "o-aleksandr-pushkin",
     "label": "Александр Пушкин",
+    "file": "alexander_pushkin.png",
     "tone": 0
   },
   {
     "id": "o-petr-chaykovskiy",
     "label": "Пётр Чайковский",
+    "file": "pyotr_tchaikovsky.png",
     "tone": 1
   },
   {
