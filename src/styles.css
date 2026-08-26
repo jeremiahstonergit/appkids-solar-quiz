@@ -240,3 +240,37 @@
 @media(max-width:600px){.difficulty-grid{grid-template-columns:1fr}.difficulty-card{display:grid;grid-template-columns:1fr auto;grid-template-areas:'label age' 'desc desc';text-align:left;align-items:center;padding:10px 14px}.difficulty-card b{grid-area:label;justify-self:start}.difficulty-card span{grid-area:age}.difficulty-card small{grid-area:desc;justify-self:start}.difficulty-hero{height:min(23vh,190px)}.numeric-card .numeric-shell{height:100px}.object-card.numeric-card{min-height:122px}.sorting-stage .sort-zone{min-height:138px}.sort-object-gone{min-height:126px}}
 
 @media(orientation:landscape) and (max-height:800px){.difficulty-grid{grid-template-columns:repeat(3,1fr);margin:4px 0}.difficulty-card{display:flex;text-align:center;padding:7px}.difficulty-card small{display:none}.difficulty-hero{height:20vh}.sort-object-gone{min-height:90px}}
+
+
+/* Layout hardening for high-DPI tablets and the debug build. */
+html,body,#root{width:100%;max-width:100%;overflow-x:hidden}
+.screen{width:100%;max-width:100%}
+.start-content{max-width:520px;padding-block:clamp(8px,2vh,20px)}
+.start-content .eyebrow,.start-content h1,.start-content .subtitle{flex-shrink:0}
+.start-content .difficulty-hero{margin:clamp(12px,2vh,22px) 0 clamp(22px,3vh,34px)}
+.start-content>.primary{width:min(100%,420px);flex-shrink:0}
+.start-content>.session-note{margin-top:18px}
+.quiz-shell{width:100%;max-width:760px;min-width:0}
+.quiz-shell>header,.quiz-shell>.question-card,.progress-wrap,.progress-meta,.choice-grid,.sequence,.sort-source,.sort-zones,.sorting-stage,.ranking-game,.rank-slots-line,.rank-pool,.truth-grid{min-width:0;max-width:100%}
+.quiz-shell>header{width:100%}
+.home{flex:0 0 50px}
+.progress-wrap{width:calc(100% - 64px)}
+.progress-meta{gap:8px}
+.progress-meta span{min-width:0;overflow-wrap:anywhere}
+.progress-meta b{flex-shrink:0;white-space:nowrap}
+.question-card{width:100%;max-width:100%}
+.question-card h2,.object-label,.object-card span{max-width:100%;overflow-wrap:anywhere}
+.object-card,.image-shell,.missing-slot,.sort-zone,.sort-current,.rank-slot{min-width:0;max-width:100%}
+.object-label,.object-card span{text-align:center}
+
+@media(max-width:600px){
+  .screen{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
+  .start-content .difficulty-hero{margin-bottom:24px}
+  .question-card h2{font-size:clamp(1.3rem,7vw,1.8rem)}
+}
+
+@media(orientation:landscape) and (max-height:800px){
+  .start-content{padding-block:0}
+  .start-content .difficulty-hero{margin:4px 0 14px}
+  .start-content>.session-note{margin-top:12px}
+}
