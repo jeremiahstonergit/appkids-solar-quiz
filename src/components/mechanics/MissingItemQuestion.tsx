@@ -7,11 +7,12 @@ type MissingItemQuestionProps = {
   question: MissingItemQuestionData
   value?: string
   checked: boolean
+  spokenOptionId?: string
   onChange: (value: string) => void
   onComplete: (right: boolean) => void
 }
 
-export function MissingItemQuestion({ question, value, checked, onChange, onComplete }: MissingItemQuestionProps) {
+export function MissingItemQuestion({ question, value, checked, spokenOptionId, onChange, onComplete }: MissingItemQuestionProps) {
   const candidates = useMemo(() => shuffle(question.candidates), [question])
   const place = (id: string) => {
     if (checked || !question.candidates.includes(id)) return
@@ -41,6 +42,7 @@ export function MissingItemQuestion({ question, value, checked, onChange, onComp
     <div className="choice-grid three missing-candidates">{candidates.map(id => <ObjectCard
       key={id}
       id={id}
+      spoken={spokenOptionId === id}
       draggable={!checked}
       onDragStart={event => { event.dataTransfer.setData('text/plain', id); event.dataTransfer.effectAllowed = 'move' }}
       onPointerDrop={dropId => { if (dropId === 'missing') place(id) }}

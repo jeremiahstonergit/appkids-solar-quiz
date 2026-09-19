@@ -7,11 +7,12 @@ type RankingQuestionProps = {
   question: RankingQuestionData
   value: string[]
   checked: boolean
+  spokenOptionId?: string
   onChange: (value: string[]) => void
   onComplete: (right: boolean) => void
 }
 
-export function RankingQuestion({ question, value, checked, onChange, onComplete }: RankingQuestionProps) {
+export function RankingQuestion({ question, value, checked, spokenOptionId, onChange, onComplete }: RankingQuestionProps) {
   const options = useMemo(() => shuffle(question.options), [question])
   const [selected, setSelected] = useState<string | undefined>(undefined)
   const [errorSlot, setErrorSlot] = useState<number | undefined>(undefined)
@@ -62,6 +63,7 @@ export function RankingQuestion({ question, value, checked, onChange, onComplete
     <div className="rank-pool">{available.map(id => <ObjectCard
       key={id}
       id={id}
+      spoken={spokenOptionId === id}
       compact
       draggable={!checked}
       selected={selected === id}
