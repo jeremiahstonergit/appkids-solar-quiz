@@ -1,0 +1,14 @@
+{
+  "appId": "com.appkids.solarsystem",
+  "appName": "AppKids: Солнечная система",
+  "webDir": "dist-offline",
+  "server": {
+    "hostname": "localhost",
+    "androidScheme": "https",
+    "cleartext": false
+  },
+  "android": {
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  }
+}

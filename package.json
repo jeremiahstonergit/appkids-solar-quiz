@@ -9,15 +9,22 @@
     "assets:prepare": "node scripts/offline-assets.mjs prepare",
     "assets:verify": "node scripts/offline-assets.mjs verify",
     "build:offline": "npm run assets:verify && tsc -b && vite build --mode offline && node scripts/verify-offline-build.mjs",
+    "android:sync": "npm run build:offline && cap sync android && node scripts/verify-android-assets.mjs",
+    "android:debug": "npm run android:sync && cd android && ./gradlew assembleDebug",
+    "android:open": "cap open android",
+    "android:verify": "node scripts/verify-apk.mjs",
     "test": "vitest run",
     "start": "serve -s dist -l 8080"
   },
   "dependencies": {
+    "@capacitor/android": "8.5.2",
+    "@capacitor/core": "8.5.2",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "serve": "14.2.6"
   },
   "devDependencies": {
+    "@capacitor/cli": "8.5.2",
     "@types/node": "24.13.6",
     "@types/react": "19.2.18",
     "@types/react-dom": "19.2.4",
