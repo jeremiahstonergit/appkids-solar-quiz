@@ -1,3 +1,6 @@
+import { voice } from '../audio/player'
+import { questionClip, feedbackClips } from '../audio/clips'
+import { ReplayVoice } from '../audio/AudioControls'
 import { useEffect, useMemo, useState } from 'react'
 import type { Answer, Question } from '../types/quiz'
 import { createInitialAnswer, isAnswerCorrect } from '../utils/quiz'
@@ -40,12 +43,19 @@ export function QuizSession({ questions, initialIndex = 0, headerLabel, onHome, 
     onQuestionChange?.(question)
   }, [index, onQuestionChange, question, questions])
 
+  const correct = question ? isAnswerCorrect(question, currentAnswer) : false
+  const feedbackCorrect = checked && correct
+  useEffect(() => {
+    if (!question) return
+    voice.setContext(checked ? feedbackClips(question, feedbackCorrect) : [questionClip(question.id)])
+    return voice.stop
+  }, [question, checked, feedbackCorrect])
+
   if (!question) return null
 
-  const correct = isAnswerCorrect(question, currentAnswer)
   const canCheck = currentAnswer !== undefined
   const submit = () => {
-    if (!canCheck) return
+    if (checked || !canCheck) return
     setChecked(true)
     if (correct) setScore(value => value + 1)
   }
@@ -75,6 +85,7 @@ export function QuizSession({ questions, initialIndex = 0, headerLabel, onHome, 
     <section className="question-card">
       <span className="mechanic">{mechanicLabels[question.type]}</span>
       <h2>{question.prompt}</h2>
+      <ReplayVoice label={checked ? "Повторить ответ" : "Повторить вопрос"}/>
       <QuestionRenderer key={question.id} question={question} answer={currentAnswer} checked={checked} onChange={setAnswer} onComplete={completeInteractive}/>
       {checked && <div className={`feedback ${correct ? 'success' : 'error'}`}><b>{correct ? 'Верно!' : 'Разберёмся!'}</b>{question.explanation && <span>{question.explanation}</span>}</div>}
       {(checked || !isInteractiveQuestion(question)) && <button className="primary action" disabled={!checked && !canCheck} onClick={checked ? next : submit}>{checked ? index === questions.length - 1 ? 'Узнать результат' : 'Дальше →' : 'Проверить'}</button>}

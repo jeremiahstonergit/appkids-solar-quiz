@@ -1,3 +1,5 @@
+import { voice } from '../audio/player'
+import { objectClip } from '../audio/clips'
 import { type DragEvent, type PointerEvent as ReactPointerEvent, useEffect, useRef, useState } from 'react'
 import { asset } from '../constants/assets'
 import { objects } from '../data/objects'
@@ -69,7 +71,7 @@ export function ObjectCard({ id, selected, state, onClick, compact = false, drag
   const showFallback = !imageFile || imageState === 'error'
   const ready = imageState !== 'loading'
 
-  return <button
+  return <div className={`object-tile ${compact ? 'compact-tile' : ''}`}><button
     className={`object-card ${numeric ? 'numeric-card' : ''} ${selected ? 'selected' : ''} ${state ?? ''} ${compact ? 'compact' : ''} ${ready ? 'image-ready' : 'image-loading'} ${imageState === 'error' ? 'image-error' : ''} ${draggable ? 'draggable' : ''} ${touchOffset ? 'touch-dragging' : ''}`}
     style={touchOffset ? { transform: `translate3d(${touchOffset.x}px,${touchOffset.y}px,0) rotate(-3deg) scale(1.08)` } : undefined}
     onClick={event => {
@@ -102,4 +104,10 @@ export function ObjectCard({ id, selected, state, onClick, compact = false, drag
     </span>
     {!numeric && <span className="object-label">{item.label}</span>}
   </button>
+    <button className="object-voice" type="button" aria-label={`Послушать: ${item.label}`} onPointerDown={event => event.stopPropagation()} onClick={event => {
+      event.stopPropagation()
+      if (!voice.getSnapshot().enabled) voice.setEnabled(true)
+      voice.play([objectClip(id)])
+    }}>🔊</button>
+  </div>
 }

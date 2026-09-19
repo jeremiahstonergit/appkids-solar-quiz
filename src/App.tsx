@@ -1,3 +1,6 @@
+import { useScreenVoice, ReplayVoice } from './audio/AudioControls'
+import { voice } from './audio/player'
+import { questionClip } from './audio/clips'
 import { useEffect, useState } from 'react'
 import { QuizSession } from './components/QuizSession'
 import { asset } from './constants/assets'
@@ -28,6 +31,7 @@ export default function App() {
   const [screen, setScreen] = useState<'start' | 'quiz' | 'finish'>(initialQuestionIndex >= 0 ? 'quiz' : 'start')
   const [score, setScore] = useState(0)
 
+  useScreenVoice(screen)
   useEffect(preloadStartupAssets, [])
   useEffect(() => {
     if (initialQuestionIndex < 0) return
@@ -40,6 +44,7 @@ export default function App() {
     preloadGameShellAssets()
     preloadQuestionAssets(debugQuestions.slice(questionIndex, questionIndex + 3))
     setScore(0)
+    voice.setContext([questionClip(debugQuestions[questionIndex].id)])
     setScreen('quiz')
   }
 
@@ -52,6 +57,7 @@ export default function App() {
     <p className="eyebrow">Режим отладки</p>
     <h1>Проверка<br/>вопросов</h1>
     <p className="subtitle">Все вопросы по порядку, без случайной выборки</p>
+    <ReplayVoice label="Послушать приветствие"/>
     <img className="hero difficulty-hero" src={asset('heroes', 'hero_start_solar_system.png')} alt="Космический герой"/>
     <button className="primary" onClick={() => startQuiz()}>Начать проверку <span>→</span></button>
     <p className="session-note">{questions.length} вопросов · по возрастанию ID · все уровни сложности</p>
@@ -60,6 +66,7 @@ export default function App() {
   if (screen === 'finish') return <main className="screen finish"><div className="finish-card">
     <img src={asset('heroes', 'hero_finish_success.png')} alt="Победа"/>
     <p className="eyebrow">Проверка завершена</p>
+    <ReplayVoice/>
     <h1>{score} из {debugQuestions.length}</h1>
     <p>Все вопросы пройдены по порядку.</p>
     <button className="primary" onClick={() => startQuiz()}>Проверить ещё раз ↻</button>
