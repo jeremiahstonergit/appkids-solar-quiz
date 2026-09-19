@@ -5,14 +5,16 @@ import { ObjectCard } from '../ObjectCard'
 
 type ChoiceQuestionProps = {
   question: ChoiceQuestionData
+  optionOrder?: string[]
   value?: string
   checked: boolean
   spokenOptionId?: string
   onChange: (value: string) => void
 }
 
-export function ChoiceQuestion({ question, value, checked, spokenOptionId, onChange }: ChoiceQuestionProps) {
-  const options = useMemo(() => shuffle(question.options), [question])
+export function ChoiceQuestion({ question, optionOrder, value, checked, spokenOptionId, onChange }: ChoiceQuestionProps) {
+  const shuffledOptions = useMemo(() => shuffle(question.options), [question])
+  const options = optionOrder ?? shuffledOptions
   return <div className="choice-grid">{options.map(id => <ObjectCard
     key={id}
     id={id}

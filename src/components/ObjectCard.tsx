@@ -23,12 +23,21 @@ export function ObjectCard({ id, selected, state, spoken = false, onClick, compa
   const imageFile = item.file
   const numeric = !imageFile && /^\d+$/.test(item.label)
   const [imageState, setImageState] = useState<'loading' | 'ready' | 'fallback' | 'error'>(imageFile ? 'loading' : 'fallback')
+  const imageRef = useRef<HTMLImageElement | null>(null)
   const [touchOffset, setTouchOffset] = useState<{ x: number; y: number } | undefined>(undefined)
   const pointerStart = useRef<{ x: number; y: number } | undefined>(undefined)
   const didMove = useRef(false)
   const activeTarget = useRef<HTMLElement | undefined>(undefined)
 
-  useEffect(() => setImageState(imageFile ? 'loading' : 'fallback'), [id, imageFile])
+  useEffect(() => {
+    if (!imageFile) {
+      setImageState('fallback')
+      return
+    }
+    setImageState('loading')
+    const image = imageRef.current
+    if (image?.complete) setImageState(image.naturalWidth > 0 ? 'ready' : 'error')
+  }, [id, imageFile])
 
   const clearTarget = () => {
     activeTarget.current?.classList.remove('drag-over')
@@ -101,7 +110,7 @@ export function ObjectCard({ id, selected, state, spoken = false, onClick, compa
         ? numeric
           ? <span className="numeric-answer">{item.label}</span>
           : <span className={`fallback-visual tone-${item.tone ?? 0}`} aria-label={imageState === 'error' ? `Нет изображения: ${item.label}` : undefined}>{item.label.length <= 2 ? item.label : item.label.slice(0, 1)}</span>
-        : <><span className="image-placeholder"/><img src={asset('objects', imageFile)} alt="" draggable={false} onLoad={() => setImageState('ready')} onError={() => setImageState('error')}/></>}
+        : <><span className="image-placeholder"/><img ref={imageRef} src={asset('objects', imageFile)} alt="" draggable={false} onLoad={() => setImageState('ready')} onError={() => setImageState('error')}/></>}
     </span>
     {!numeric && <span className="object-label">{item.label}</span>}
   </button>

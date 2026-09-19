@@ -6,14 +6,16 @@ import { ObjectCard } from '../ObjectCard'
 
 type SortingQuestionProps = {
   question: SortingQuestionData
+  optionOrder?: string[]
   value: Record<string, string>
   checked: boolean
   onChange: (value: Record<string, string>) => void
   onComplete: (right: boolean) => void
 }
 
-export function SortingQuestion({ question, value, checked, onChange, onComplete }: SortingQuestionProps) {
-  const options = useMemo(() => shuffle(question.options), [question])
+export function SortingQuestion({ question, optionOrder, value, checked, onChange, onComplete }: SortingQuestionProps) {
+  const shuffledOptions = useMemo(() => shuffle(question.options), [question])
+  const options = optionOrder ?? shuffledOptions
   const [active, setActive] = useState(0)
   const [feedback, setFeedback] = useState<boolean | undefined>(undefined)
   const [chosen, setChosen] = useState<string | undefined>(undefined)

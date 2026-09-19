@@ -6,6 +6,7 @@ import type { Answer, Question } from '../types/quiz'
 import { questionDifficulty } from '../data/difficulty'
 import { createInitialAnswer, isAnswerCorrect } from '../utils/quiz'
 import { preloadQuestionAssets } from '../utils/preload'
+import { shuffle } from '../utils/shuffle'
 import { QuestionRenderer } from './QuestionRenderer'
 
 const mechanicLabels: Record<Question['type'], string> = {
@@ -37,6 +38,7 @@ export function QuizSession({ questions, initialIndex = 0, headerLabel, onHome, 
   const [spokenOptionId, setSpokenOptionId] = useState<string | undefined>(undefined)
   const question = questions[index]
   const initialAnswer = useMemo(() => question ? createInitialAnswer(question) : undefined, [question])
+  const optionOrder = useMemo(() => question ? shuffle(optionIds(question)) : [], [question])
   const currentAnswer = answer ?? initialAnswer
 
   useEffect(() => {
@@ -49,11 +51,11 @@ export function QuizSession({ questions, initialIndex = 0, headerLabel, onHome, 
   const feedbackCorrect = checked && correct
   useEffect(() => {
     if (!question) return
-    const spokenOptions = !checked && questionDifficulty[question.id] === 1 ? optionIds(question) : []
+    const spokenOptions = !checked && questionDifficulty[question.id] === 1 && question.type !== 'sorting' ? optionOrder : []
     const clips = checked ? feedbackClips(question, feedbackCorrect) : [questionClip(question.id), ...spokenOptions.map(objectClip)]
     voice.setContext(clips, true, clipIndex => setSpokenOptionId(clipIndex === null || clipIndex === 0 ? undefined : spokenOptions[clipIndex - 1]))
     return () => { setSpokenOptionId(undefined); voice.stop() }
-  }, [question, checked, feedbackCorrect])
+  }, [question, checked, feedbackCorrect, optionOrder])
 
   if (!question) return null
 
@@ -90,7 +92,7 @@ export function QuizSession({ questions, initialIndex = 0, headerLabel, onHome, 
       <span className="mechanic">{mechanicLabels[question.type]}</span>
       <h2>{question.prompt}</h2>
       <ReplayVoice label={checked ? "Повторить ответ" : "Повторить вопрос"}/>
-      <QuestionRenderer key={question.id} question={question} answer={currentAnswer} checked={checked} spokenOptionId={spokenOptionId} onChange={setAnswer} onComplete={completeInteractive}/>
+      <QuestionRenderer key={question.id} question={question} answer={currentAnswer} checked={checked} optionOrder={optionOrder} spokenOptionId={spokenOptionId} onChange={setAnswer} onComplete={completeInteractive}/>
       {checked && <div className={`feedback ${correct ? 'success' : 'error'}`}><b>{correct ? 'Верно!' : 'Разберёмся!'}</b>{question.explanation && <span>{question.explanation}</span>}</div>}
       {(checked || !isInteractiveQuestion(question)) && <button className="primary action" disabled={!checked && !canCheck} onClick={checked ? next : submit}>{checked ? index === questions.length - 1 ? 'Узнать результат' : 'Дальше →' : 'Проверить'}</button>}
     </section>
