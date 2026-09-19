@@ -274,3 +274,15 @@ html,body,#root{width:100%;max-width:100%;overflow-x:hidden}
   .start-content .difficulty-hero{margin:4px 0 14px}
   .start-content>.session-note{margin-top:12px}
 }
+
+/* Voice controls remain separate from answer/drag buttons. */
+.audio-controls{position:relative;z-index:60;display:flex;align-items:center;justify-content:flex-end;gap:10px;padding:8px 14px;background:#101735;color:#fff;flex-wrap:wrap}
+.audio-controls button,.voice-repeat,.object-voice{border:1px solid #ffffff55;border-radius:12px;background:#202d60;color:#fff;cursor:pointer;min-height:44px;padding:8px 12px;font:inherit}
+.audio-controls span{font-size:.8rem}.audio-controls span:empty{display:none}
+.voice-repeat{font-size:.85rem;margin:0 0 12px}.object-tile{position:relative;min-width:0;width:100%;display:flex;align-self:stretch}
+.object-tile>.object-card{width:100%;padding-top:42px}.object-tile>.object-card.compact{padding-top:6px}
+.object-voice{position:absolute;right:3px;top:3px;z-index:3;min-width:44px;padding:4px;font-size:18px;touch-action:manipulation}
+.rank-slot>.object-tile{height:100%;width:100%}.rank-slot>.object-tile>.object-card{height:100%;padding:3px;border:0!important;background:transparent!important;margin:0}.rank-slot>.object-tile>.object-card .image-shell{height:64px}
+.rank-pool>.object-tile{min-width:0}.missing-slot.filled>.object-tile{height:100%}.missing-slot.filled>.object-tile>.object-card{border:0!important;background:transparent!important;margin:0}
+.sorting-stage .sort-current>.object-tile{max-width:190px}.sorting-stage .sort-current>.object-tile>.object-card{margin:0}
+.audio-controls button:focus-visible,.voice-repeat:focus-visible,.object-voice:focus-visible{outline:3px solid #ffd450;outline-offset:2px}

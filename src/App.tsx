@@ -1,3 +1,6 @@
+import { useScreenVoice, ReplayVoice } from './audio/AudioControls'
+import { voice } from './audio/player'
+import { questionClip } from './audio/clips'
 import { useEffect, useState } from 'react'
 import { QuizSession } from './components/QuizSession'
 import { asset } from './constants/assets'
@@ -11,6 +14,7 @@ export default function App() {
   const [screen, setScreen] = useState<'start' | 'quiz' | 'finish'>('start')
   const [score, setScore] = useState(0)
 
+  useScreenVoice(screen)
   useEffect(preloadStartupAssets, [])
 
   const startQuiz = (difficulty = selectedDifficulty) => {
@@ -21,6 +25,7 @@ export default function App() {
     preloadGameShellAssets()
     preloadQuestionAssets(nextQuestions)
     setScore(0)
+    voice.setContext([questionClip(nextQuestions[0].id)])
     setScreen('quiz')
   }
 
@@ -28,6 +33,7 @@ export default function App() {
     <p className="eyebrow">Космическая викторина</p>
     <h1>Солнечная<br/>система</h1>
     <p className="subtitle">Выбери уровень сложности</p>
+    <ReplayVoice label="Послушать приветствие"/>
     <div className="difficulty-grid">{([1, 2, 3] as Difficulty[]).map(level => {
       const meta = difficultyMeta[level]
       return <button key={level} className={`difficulty-card level-${level} ${selectedDifficulty === level ? 'selected' : ''}`} onClick={() => setSelectedDifficulty(level)}><b>{meta.label}</b><span>{meta.age}</span><small>{meta.description}</small></button>
@@ -40,6 +46,7 @@ export default function App() {
   if (screen === 'finish') return <main className="screen finish"><div className="finish-card">
     <img src={asset('heroes', 'hero_finish_success.png')} alt="Победа"/>
     <p className="eyebrow">Миссия выполнена!</p>
+    <ReplayVoice/>
     <h1>{score} из {sessionQuestions.length}</h1>
     <p>{selectedDifficulty && `${difficultyMeta[selectedDifficulty].label} · ${difficultyMeta[selectedDifficulty].age}`}</p>
     <p>{score >= 10 ? 'Ты настоящий знаток космоса!' : score >= 7 ? 'Отличный полёт!' : 'Хорошее начало, исследователь!'}</p>
