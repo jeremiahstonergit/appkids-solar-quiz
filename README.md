@@ -70,7 +70,7 @@ npm run android:open
 В Android Studio: Build → Generate App Bundles or APKs → Generate APKs.
 Либо из терминала Linux/macOS: `npm run android:debug`.
 На Windows после `npm run android:sync`: `cd android`, затем
-`.\gradlew.bat assembleDebug`.
+`.\gradlew.bat :app:assembleDebug`.
 
 Результат: `android/app/build/outputs/apk/debug/app-debug.apk`.
 Это установочная отладочная APK, не релиз для магазина. Ключ релизной подписи
@@ -86,7 +86,7 @@ npm run android:open
 Адрес `https://localhost` — внутренний адрес встроенных файлов, не сетевой сервер.
 Загрузка SDK/зависимостей нужна при сборке, но не при запуске установленной игры.
 
-После подключения устройства: `cd android && ./gradlew connectedDebugAndroidTest`
+После подключения устройства: `cd android && ./gradlew :app:connectedDebugAndroidTest`
 проверяет отсутствие разрешения INTERNET и наличие всех групп озвучки.
 Первый запуск в авиарежиме, звук, повороты, сворачивание и кнопка «Назад» требуют
 отдельной проверки; прохождение JS-тестов её не заменяет.

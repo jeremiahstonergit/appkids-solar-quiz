@@ -10,7 +10,7 @@
     "assets:verify": "node scripts/offline-assets.mjs verify",
     "build:offline": "npm run assets:verify && tsc -b && vite build --mode offline && node scripts/verify-offline-build.mjs",
     "android:sync": "npm run build:offline && cap sync android && node scripts/verify-android-assets.mjs",
-    "android:debug": "npm run android:sync && cd android && ./gradlew assembleDebug",
+    "android:debug": "npm run android:sync && cd android && ./gradlew :app:assembleDebug",
     "android:open": "cap open android",
     "android:verify": "node scripts/verify-apk.mjs",
     "test": "vitest run",
