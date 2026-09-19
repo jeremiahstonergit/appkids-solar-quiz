@@ -10,6 +10,7 @@ type ObjectCardProps = {
   id: string
   selected?: boolean
   state?: CardState
+  spoken?: boolean
   onClick?: () => void
   compact?: boolean
   draggable?: boolean
@@ -17,7 +18,7 @@ type ObjectCardProps = {
   onPointerDrop?: (dropId: string) => void
 }
 
-export function ObjectCard({ id, selected, state, onClick, compact = false, draggable = false, onDragStart, onPointerDrop }: ObjectCardProps) {
+export function ObjectCard({ id, selected, state, spoken = false, onClick, compact = false, draggable = false, onDragStart, onPointerDrop }: ObjectCardProps) {
   const item = objects[id] ?? { id, label: id, tone: 0 }
   const imageFile = item.file
   const numeric = !imageFile && /^\d+$/.test(item.label)
@@ -72,7 +73,7 @@ export function ObjectCard({ id, selected, state, onClick, compact = false, drag
   const ready = imageState !== 'loading'
 
   return <div className={`object-tile ${compact ? 'compact-tile' : ''}`}><button
-    className={`object-card ${numeric ? 'numeric-card' : ''} ${selected ? 'selected' : ''} ${state ?? ''} ${compact ? 'compact' : ''} ${ready ? 'image-ready' : 'image-loading'} ${imageState === 'error' ? 'image-error' : ''} ${draggable ? 'draggable' : ''} ${touchOffset ? 'touch-dragging' : ''}`}
+    className={`object-card ${numeric ? 'numeric-card' : ''} ${selected ? 'selected' : ''} ${spoken ? 'spoken' : ''} ${state ?? ''} ${compact ? 'compact' : ''} ${ready ? 'image-ready' : 'image-loading'} ${imageState === 'error' ? 'image-error' : ''} ${draggable ? 'draggable' : ''} ${touchOffset ? 'touch-dragging' : ''}`}
     style={touchOffset ? { transform: `translate3d(${touchOffset.x}px,${touchOffset.y}px,0) rotate(-3deg) scale(1.08)` } : undefined}
     onClick={event => {
       if (didMove.current) {

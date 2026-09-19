@@ -1,11 +1,13 @@
 export type AudioStatus = 'idle' | 'playing' | 'blocked' | 'unavailable'
 export type AudioSnapshot = { enabled: boolean; status: AudioStatus }
+export type ClipProgress = (index: number | null) => void
 
 // One reusable media element: no overlapping voices, including delayed play() promises.
 export class VoicePlayer {
   private media?: HTMLAudioElement
   private generation = 0
   private context: string[] = []
+  private contextProgress?: ClipProgress
   private listeners = new Set<() => void>()
   private cancel?: () => void
   private snapshot: AudioSnapshot = { enabled: true, status: 'idle' }
@@ -31,12 +33,13 @@ export class VoicePlayer {
     if (enabled) this.replay()
     else this.stop()
   }
-  setContext(clips: string[], autoplay = true) {
+  setContext(clips: string[], autoplay = true, progress?: ClipProgress) {
     this.context = clips
-    if (autoplay) this.play(clips)
+    this.contextProgress = progress
+    if (autoplay) this.play(clips, progress)
   }
-  replay = () => this.play(this.context)
-  play = (clips: string[]) => {
+  replay = () => this.play(this.context, this.contextProgress)
+  play = (clips: string[], progress?: ClipProgress) => {
     this.stop()
     if (!this.snapshot.enabled || !clips.length) return
     const generation = this.generation
@@ -44,7 +47,11 @@ export class VoicePlayer {
     let failed = false
     const next = (index: number) => {
       if (generation !== this.generation) return
-      if (index === clips.length) { this.update(failed ? 'unavailable' : 'idle'); return }
+      if (index === clips.length) {
+        progress?.(null)
+        this.update(failed ? 'unavailable' : 'idle')
+        return
+      }
       let settled = false
       let timeout: ReturnType<typeof setTimeout>
       const cleanup = () => {
@@ -62,6 +69,7 @@ export class VoicePlayer {
         next(index + 1)
       }
       this.cancel = () => { settled = true; cleanup() }
+      progress?.(index)
       media.onended = () => finish()
       media.onerror = () => finish(true)
       media.onplaying = () => {
@@ -78,6 +86,7 @@ export class VoicePlayer {
           if (error?.name === 'NotAllowedError') {
             settled = true
             cleanup()
+            progress?.(null)
             this.update('blocked')
           } else finish(true)
         })

@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { VoicePlayer } from '../src/audio/player'
-import { feedbackClips, questionClip, explanationClip, objectClip } from '../src/audio/clips'
+import { feedbackClips, questionClip, explanationClip, objectClip, optionIds } from '../src/audio/clips'
 import { questions } from '../src/data/questions'
 import { objects } from '../src/data/objects'
 
@@ -26,6 +26,15 @@ describe('voice playback lifecycle', () => {
     expect(media.src).toBe('explanation')
     media.onended!()
     expect(player.getSnapshot().status).toBe('idle')
+  })
+  it('reports the active clip and clears the highlight after the queue', () => {
+    const progress = vi.fn()
+    player.play(['question', 'option'], progress)
+    expect(progress).toHaveBeenLastCalledWith(0)
+    media.onended!()
+    expect(progress).toHaveBeenLastCalledWith(1)
+    media.onended!()
+    expect(progress).toHaveBeenLastCalledWith(null)
   })
   it('ignores an old ended event after navigating to another question', () => {
     player.play(['old', 'old-explanation'])
@@ -91,5 +100,10 @@ describe('recording coverage', () => {
     const q = questions.find(q => !q.explanation)!
     expect(feedbackClips(q, false)).toEqual([])
     expect(feedbackClips(q, true)).toHaveLength(1)
+  })
+  it('returns object-backed answer variants for the easy-mode narrator', () => {
+    expect(optionIds(questions.find(question => question.id === 1)!)).toHaveLength(4)
+    expect(optionIds(questions.find(question => question.id === 51)!)).toHaveLength(3)
+    expect(optionIds(questions.find(question => question.id === 41)!)).toEqual([])
   })
 })

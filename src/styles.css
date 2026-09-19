@@ -286,3 +286,5 @@ html,body,#root{width:100%;max-width:100%;overflow-x:hidden}
 .rank-pool>.object-tile{min-width:0}.missing-slot.filled>.object-tile{height:100%}.missing-slot.filled>.object-tile>.object-card{border:0!important;background:transparent!important;margin:0}
 .sorting-stage .sort-current>.object-tile{max-width:190px}.sorting-stage .sort-current>.object-tile>.object-card{margin:0}
 .audio-controls button:focus-visible,.voice-repeat:focus-visible,.object-voice:focus-visible{outline:3px solid #ffd450;outline-offset:2px}
+.object-card.spoken{border-color:var(--yellow)!important;background:#ffd4503d!important;box-shadow:0 0 0 5px #ffd45045,0 12px 30px #0007;transform:translateY(-4px) scale(1.03);animation:spokenPulse .7s ease-in-out infinite alternate}
+@keyframes spokenPulse{to{box-shadow:0 0 0 8px #ffd4501f,0 16px 34px #0008}}
