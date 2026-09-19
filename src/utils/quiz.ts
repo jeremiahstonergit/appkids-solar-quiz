@@ -1,4 +1,16 @@
 import type { Answer, Question } from '../types/quiz'
+import { shuffle } from './shuffle'
+
+// Rendering and narration share the same options, including sorting.
+export const optionIds = (question: Question): string[] => {
+  if (question.type === 'true_false') return []
+  return question.type === 'missing_item' ? question.candidates : question.options
+}
+
+export const resolveOptionOrder = (options: string[], order?: string[]) =>
+  order?.length === options.length && new Set(order).size === options.length && order.every(id => options.includes(id))
+    ? order
+    : shuffle(options)
 
 const isAssignmentAnswer = (answer: Answer | undefined): answer is Record<string, string> =>
   typeof answer === 'object' && answer !== null && !Array.isArray(answer)

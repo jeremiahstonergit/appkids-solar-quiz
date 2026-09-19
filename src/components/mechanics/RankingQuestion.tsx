@@ -1,6 +1,6 @@
-import { type DragEvent, useEffect, useMemo, useState } from 'react'
+import { type DragEvent, useEffect, useMemo, useRef, useState } from 'react'
 import type { RankingQuestion as RankingQuestionData } from '../../types/quiz'
-import { shuffle } from '../../utils/shuffle'
+import { resolveOptionOrder } from '../../utils/quiz'
 import { ObjectCard } from '../ObjectCard'
 
 type RankingQuestionProps = {
@@ -11,28 +11,33 @@ type RankingQuestionProps = {
   spokenOptionId?: string
   onChange: (value: string[]) => void
   onComplete: (right: boolean) => void
+  onInteract?: () => void
 }
 
-export function RankingQuestion({ question, optionOrder, value, checked, spokenOptionId, onChange, onComplete }: RankingQuestionProps) {
-  const shuffledOptions = useMemo(() => shuffle(question.options), [question])
-  const options = optionOrder ?? shuffledOptions
+export function RankingQuestion({ question, optionOrder, value, checked, spokenOptionId, onChange, onComplete, onInteract }: RankingQuestionProps) {
+  const options = useMemo(() => resolveOptionOrder(question.options, optionOrder), [question, optionOrder])
   const [selected, setSelected] = useState<string | undefined>(undefined)
   const [errorSlot, setErrorSlot] = useState<number | undefined>(undefined)
   const [message, setMessage] = useState<'right' | 'wrong' | undefined>(undefined)
   const correct = question.correct.split(',')
+  const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined)
 
   useEffect(() => {
     setSelected(undefined)
     setErrorSlot(undefined)
     setMessage(undefined)
+    return () => clearTimeout(timer.current)
   }, [question.id])
 
   const place = (id: string, target: number) => {
-    if (checked || value[target] || !question.options.includes(id)) return
+    if (checked || !Number.isInteger(target) || target < 0 || target >= correct.length || value[target] || value.includes(id) || !question.options.includes(id)) return
+    onInteract?.()
+    clearTimeout(timer.current)
+    setErrorSlot(undefined)
     if (correct[target] !== id) {
       setErrorSlot(target)
       setMessage('wrong')
-      setTimeout(() => { setErrorSlot(undefined); setMessage(undefined) }, 700)
+      timer.current = setTimeout(() => { setErrorSlot(undefined); setMessage(undefined) }, 700)
       return
     }
     const next = [...value]
@@ -42,7 +47,7 @@ export function RankingQuestion({ question, optionOrder, value, checked, spokenO
     setMessage('right')
     // Ranking intentionally lets a child retry until every object is in place.
     if (next.every(Boolean)) onComplete(true)
-    else setTimeout(() => setMessage(undefined), 650)
+    else timer.current = setTimeout(() => setMessage(undefined), 650)
   }
 
   const nativeDrop = (event: DragEvent<HTMLDivElement>, index: number) => {
@@ -69,6 +74,7 @@ export function RankingQuestion({ question, optionOrder, value, checked, spokenO
       compact
       draggable={!checked}
       selected={selected === id}
+      onInteract={onInteract}
       onClick={() => setSelected(current => current === id ? undefined : id)}
       onDragStart={event => { event.dataTransfer.setData('text/plain', id); event.dataTransfer.effectAllowed = 'move' }}
       onPointerDrop={dropId => { if (dropId.startsWith('rank-')) place(id, Number(dropId.slice(5))) }}

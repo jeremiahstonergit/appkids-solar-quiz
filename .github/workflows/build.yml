@@ -1,10 +1,10 @@
-name: Production build
+name: Tests and production build
 
 on:
   push:
-    branches: [main]
+    branches: [main, debug/all-questions]
   pull_request:
-    branches: [main]
+    branches: [main, debug/all-questions]
   workflow_dispatch:
 
 jobs:
@@ -17,4 +17,5 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm ci --no-audit --no-fund
+      - run: npm test
       - run: npm run build

@@ -1,6 +1,4 @@
 import { useScreenVoice, ReplayVoice } from './audio/AudioControls'
-import { voice } from './audio/player'
-import { questionClip } from './audio/clips'
 import { useEffect, useState } from 'react'
 import { QuizSession } from './components/QuizSession'
 import { asset } from './constants/assets'
@@ -25,7 +23,6 @@ export default function App() {
     preloadGameShellAssets()
     preloadQuestionAssets(nextQuestions)
     setScore(0)
-    voice.setContext([questionClip(nextQuestions[0].id)])
     setScreen('quiz')
   }
 
