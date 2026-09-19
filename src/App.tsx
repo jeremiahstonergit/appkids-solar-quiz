@@ -1,6 +1,4 @@
 import { useScreenVoice, ReplayVoice } from './audio/AudioControls'
-import { voice } from './audio/player'
-import { questionClip } from './audio/clips'
 import { useEffect, useState } from 'react'
 import { QuizSession } from './components/QuizSession'
 import { asset } from './constants/assets'
@@ -44,7 +42,6 @@ export default function App() {
     preloadGameShellAssets()
     preloadQuestionAssets(debugQuestions.slice(questionIndex, questionIndex + 3))
     setScore(0)
-    voice.setContext([questionClip(debugQuestions[questionIndex].id)])
     setScreen('quiz')
   }
 
@@ -67,8 +64,8 @@ export default function App() {
     <img src={asset('heroes', 'hero_finish_success.png')} alt="Победа"/>
     <p className="eyebrow">Проверка завершена</p>
     <ReplayVoice/>
-    <h1>{score} из {debugQuestions.length}</h1>
-    <p>Все вопросы пройдены по порядку.</p>
+    <h1>{score} из {debugQuestions.length - sessionStartIndex}</h1>
+    <p>{sessionStartIndex === 0 ? 'Все вопросы пройдены по порядку.' : `Пройдены вопросы с ID ${debugQuestions[sessionStartIndex].id} по ID ${debugQuestions[debugQuestions.length - 1].id}.`}</p>
     <button className="primary" onClick={() => startQuiz()}>Проверить ещё раз ↻</button>
     <button className="secondary" onClick={goHome}>На стартовый экран</button>
   </div></main>

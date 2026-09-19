@@ -1,6 +1,6 @@
 import { type DragEvent, useMemo } from 'react'
 import type { MissingItemQuestion as MissingItemQuestionData } from '../../types/quiz'
-import { shuffle } from '../../utils/shuffle'
+import { resolveOptionOrder } from '../../utils/quiz'
 import { ObjectCard } from '../ObjectCard'
 
 type MissingItemQuestionProps = {
@@ -14,8 +14,7 @@ type MissingItemQuestionProps = {
 }
 
 export function MissingItemQuestion({ question, optionOrder, value, checked, spokenOptionId, onChange, onComplete }: MissingItemQuestionProps) {
-  const shuffledCandidates = useMemo(() => shuffle(question.candidates), [question])
-  const candidates = optionOrder ?? shuffledCandidates
+  const candidates = useMemo(() => resolveOptionOrder(question.candidates, optionOrder), [question, optionOrder])
   const place = (id: string) => {
     if (checked || !question.candidates.includes(id)) return
     onChange(id)

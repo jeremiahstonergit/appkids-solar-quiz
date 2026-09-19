@@ -1,7 +1,7 @@
 import { type DragEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { sortingCategories } from '../../data/difficulty'
 import type { SortingCategory, SortingQuestion as SortingQuestionData } from '../../types/quiz'
-import { shuffle } from '../../utils/shuffle'
+import { resolveOptionOrder } from '../../utils/quiz'
 import { ObjectCard } from '../ObjectCard'
 
 type SortingQuestionProps = {
@@ -11,11 +11,13 @@ type SortingQuestionProps = {
   checked: boolean
   onChange: (value: Record<string, string>) => void
   onComplete: (right: boolean) => void
+  spokenOptionId?: string
+  onActiveChange?: (index: number, visible: boolean) => void
+  onInteract?: () => void
 }
 
-export function SortingQuestion({ question, optionOrder, value, checked, onChange, onComplete }: SortingQuestionProps) {
-  const shuffledOptions = useMemo(() => shuffle(question.options), [question])
-  const options = optionOrder ?? shuffledOptions
+export function SortingQuestion({ question, optionOrder, value, checked, spokenOptionId, onActiveChange, onInteract, onChange, onComplete }: SortingQuestionProps) {
+  const options = useMemo(() => resolveOptionOrder(question.options, optionOrder), [question, optionOrder])
   const [active, setActive] = useState(0)
   const [feedback, setFeedback] = useState<boolean | undefined>(undefined)
   const [chosen, setChosen] = useState<string | undefined>(undefined)
@@ -30,8 +32,13 @@ export function SortingQuestion({ question, optionOrder, value, checked, onChang
   }, [question.id])
 
   const id = options[active]
+  useEffect(() => {
+    onActiveChange?.(active, feedback === undefined && !checked)
+  }, [active, feedback, checked, onActiveChange])
+
   const place = (category: string) => {
-    if (checked || feedback !== undefined || !categories.some(item => item.id === category)) return
+    if (!id || checked || feedback !== undefined || !categories.some(item => item.id === category)) return
+    onInteract?.()
     const next = { ...value, [id]: category }
     const right = question.assignments[id] === category
     onChange(next)
@@ -67,9 +74,11 @@ export function SortingQuestion({ question, optionOrder, value, checked, onChang
     <div className="sorting-stage">
       {zone(categories[0], 0)}
       <div className={`sort-current ${feedback !== undefined ? 'sort-object-gone' : ''}`}>
-        {feedback === undefined && <ObjectCard
+        {id && feedback === undefined && <ObjectCard
           key={id}
           id={id}
+          spoken={spokenOptionId === id}
+          onInteract={onInteract}
           draggable={!checked}
           onDragStart={event => { event.dataTransfer.setData('text/plain', id); event.dataTransfer.effectAllowed = 'move' }}
           onPointerDrop={place}

@@ -16,10 +16,11 @@ type ObjectCardProps = {
   draggable?: boolean
   onDragStart?: (event: DragEvent<HTMLButtonElement>) => void
   onPointerDrop?: (dropId: string) => void
+  onInteract?: () => void
 }
 
-export function ObjectCard({ id, selected, state, spoken = false, onClick, compact = false, draggable = false, onDragStart, onPointerDrop }: ObjectCardProps) {
-  const item = objects[id] ?? { id, label: id, tone: 0 }
+export function ObjectCard({ id, selected, state, spoken = false, onClick, compact = false, draggable = false, onDragStart, onPointerDrop, onInteract }: ObjectCardProps) {
+  const item = objects[id] ?? { id, label: id || '?', tone: 0 }
   const imageFile = item.file
   const numeric = !imageFile && /^\d+$/.test(item.label)
   const [imageState, setImageState] = useState<'loading' | 'ready' | 'fallback' | 'error'>(imageFile ? 'loading' : 'fallback')
@@ -28,6 +29,13 @@ export function ObjectCard({ id, selected, state, spoken = false, onClick, compa
   const pointerStart = useRef<{ x: number; y: number } | undefined>(undefined)
   const didMove = useRef(false)
   const activeTarget = useRef<HTMLElement | undefined>(undefined)
+  const manualPlayback = useRef<(() => void) | undefined>(undefined)
+  const [manualSpoken, setManualSpoken] = useState(false)
+
+  useEffect(() => () => {
+    manualPlayback.current?.()
+    activeTarget.current?.classList.remove('drag-over')
+  }, [id])
 
   useEffect(() => {
     if (!imageFile) {
@@ -45,6 +53,7 @@ export function ObjectCard({ id, selected, state, spoken = false, onClick, compa
   }
 
   const pointerDown = (event: ReactPointerEvent<HTMLButtonElement>) => {
+    onInteract?.()
     if (!draggable || event.pointerType === 'mouse') return
     pointerStart.current = { x: event.clientX, y: event.clientY }
     didMove.current = false
@@ -82,7 +91,8 @@ export function ObjectCard({ id, selected, state, spoken = false, onClick, compa
   const ready = imageState !== 'loading'
 
   return <div className={`object-tile ${compact ? 'compact-tile' : ''}`}><button
-    className={`object-card ${numeric ? 'numeric-card' : ''} ${selected ? 'selected' : ''} ${spoken ? 'spoken' : ''} ${state ?? ''} ${compact ? 'compact' : ''} ${ready ? 'image-ready' : 'image-loading'} ${imageState === 'error' ? 'image-error' : ''} ${draggable ? 'draggable' : ''} ${touchOffset ? 'touch-dragging' : ''}`}
+    className={`object-card ${numeric ? 'numeric-card' : ''} ${selected ? 'selected' : ''} ${spoken || manualSpoken ? 'spoken' : ''} ${state ?? ''} ${compact ? 'compact' : ''} ${ready ? 'image-ready' : 'image-loading'} ${imageState === 'error' ? 'image-error' : ''} ${draggable ? 'draggable' : ''} ${touchOffset ? 'touch-dragging' : ''}`}
+    data-object-id={id}
     style={touchOffset ? { transform: `translate3d(${touchOffset.x}px,${touchOffset.y}px,0) rotate(-3deg) scale(1.08)` } : undefined}
     onClick={event => {
       if (didMove.current) {
@@ -90,11 +100,12 @@ export function ObjectCard({ id, selected, state, spoken = false, onClick, compa
         didMove.current = false
         return
       }
+      onInteract?.()
       onClick?.()
     }}
     disabled={!onClick && !draggable}
     draggable={draggable}
-    onDragStart={onDragStart}
+    onDragStart={event => { onInteract?.(); onDragStart?.(event) }}
     onDragEnd={clearTarget}
     onPointerDown={pointerDown}
     onPointerMove={pointerMove}
@@ -116,8 +127,8 @@ export function ObjectCard({ id, selected, state, spoken = false, onClick, compa
   </button>
     <button className="object-voice" type="button" aria-label={`Послушать: ${item.label}`} onPointerDown={event => event.stopPropagation()} onClick={event => {
       event.stopPropagation()
-      if (!voice.getSnapshot().enabled) voice.setEnabled(true)
-      voice.play([objectClip(id)])
+      if (!voice.getSnapshot().enabled) voice.setEnabled(true, false)
+      manualPlayback.current = voice.play([objectClip(id)], index => setManualSpoken(index === 0))
     }}>🔊</button>
   </div>
 }

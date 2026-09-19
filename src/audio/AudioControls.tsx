@@ -19,9 +19,8 @@ export function AudioControls() {
 }
 export function useScreenVoice(screen: string) {
   useEffect(() => {
-    if (screen === 'start') voice.setContext([uiClip('greeting')])
-    if (screen === 'finish') voice.setContext([uiClip('finish')])
-    return voice.stop
+    if (screen === 'start') return voice.setContext([uiClip('greeting')])
+    if (screen === 'finish') return voice.setContext([uiClip('finish')])
   }, [screen])
 }
 export function ReplayVoice({ label = 'Послушать ещё раз' }: { label?: string }) {

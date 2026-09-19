@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import type { ChoiceQuestion as ChoiceQuestionData } from '../../types/quiz'
-import { shuffle } from '../../utils/shuffle'
+import { resolveOptionOrder } from '../../utils/quiz'
 import { ObjectCard } from '../ObjectCard'
 
 type ChoiceQuestionProps = {
@@ -13,8 +13,7 @@ type ChoiceQuestionProps = {
 }
 
 export function ChoiceQuestion({ question, optionOrder, value, checked, spokenOptionId, onChange }: ChoiceQuestionProps) {
-  const shuffledOptions = useMemo(() => shuffle(question.options), [question])
-  const options = optionOrder ?? shuffledOptions
+  const options = useMemo(() => resolveOptionOrder(question.options, optionOrder), [question, optionOrder])
   return <div className="choice-grid">{options.map(id => <ObjectCard
     key={id}
     id={id}

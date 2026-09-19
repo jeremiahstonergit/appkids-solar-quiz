@@ -1,10 +1,10 @@
 import { voice } from '../audio/player'
-import { questionClip, feedbackClips, objectClip, optionIds } from '../audio/clips'
+import { questionClip, feedbackClips, objectClip } from '../audio/clips'
 import { ReplayVoice } from '../audio/AudioControls'
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { Answer, Question } from '../types/quiz'
 import { questionDifficulty } from '../data/difficulty'
-import { createInitialAnswer, isAnswerCorrect } from '../utils/quiz'
+import { createInitialAnswer, isAnswerCorrect, optionIds } from '../utils/quiz'
 import { preloadQuestionAssets } from '../utils/preload'
 import { shuffle } from '../utils/shuffle'
 import { QuestionRenderer } from './QuestionRenderer'
@@ -36,10 +36,19 @@ export function QuizSession({ questions, initialIndex = 0, headerLabel, onHome, 
   const [checked, setChecked] = useState(false)
   const [score, setScore] = useState(0)
   const [spokenOptionId, setSpokenOptionId] = useState<string | undefined>(undefined)
+  const [sortingRound, setSortingRound] = useState<{ questionId: number; index: number; visible: boolean }>()
   const question = questions[index]
   const initialAnswer = useMemo(() => question ? createInitialAnswer(question) : undefined, [question])
   const optionOrder = useMemo(() => question ? shuffle(optionIds(question)) : [], [question])
   const currentAnswer = answer ?? initialAnswer
+  const sortingIndex = sortingRound?.questionId === question?.id ? sortingRound?.index ?? 0 : 0
+  const sortingVisible = sortingRound?.questionId === question?.id ? sortingRound?.visible ?? true : true
+  const onSortingActiveChange = useCallback((index: number, visible: boolean) => {
+    if (!question) return
+    setSortingRound(previous => previous?.questionId === question.id && previous.index === index && previous.visible === visible
+      ? previous : { questionId: question.id, index, visible })
+  }, [question])
+  const rankingAnswer = question?.type === 'ranking' && Array.isArray(currentAnswer) ? currentAnswer : undefined
 
   useEffect(() => {
     if (!question) return
@@ -51,11 +60,19 @@ export function QuizSession({ questions, initialIndex = 0, headerLabel, onHome, 
   const feedbackCorrect = checked && correct
   useEffect(() => {
     if (!question) return
-    const spokenOptions = !checked && questionDifficulty[question.id] === 1 && question.type !== 'sorting' ? optionOrder : []
+    const visibleOptions = question.type === 'sorting'
+      ? sortingVisible ? optionOrder.slice(sortingIndex, sortingIndex + 1) : []
+      : optionOrder.filter(id => !rankingAnswer?.includes(id))
+    const spokenOptions = !checked && questionDifficulty[question.id] === 1 ? visibleOptions : []
     const clips = checked ? feedbackClips(question, feedbackCorrect) : [questionClip(question.id), ...spokenOptions.map(objectClip)]
-    voice.setContext(clips, true, clipIndex => setSpokenOptionId(clipIndex === null || clipIndex === 0 ? undefined : spokenOptions[clipIndex - 1]))
-    return () => { setSpokenOptionId(undefined); voice.stop() }
-  }, [question, checked, feedbackCorrect, optionOrder])
+    const laterSortingObject = question.type === 'sorting' && sortingIndex > 0
+    const autoplay = checked || (question.type === 'sorting'
+      ? sortingVisible && (!laterSortingObject || spokenOptions.length > 0)
+      : !rankingAnswer?.some(Boolean))
+    return voice.setContext(clips, autoplay,
+      clipIndex => setSpokenOptionId(clipIndex === null || clipIndex === 0 ? undefined : spokenOptions[clipIndex - 1]),
+      !checked && laterSortingObject ? 1 : 0)
+  }, [question, checked, feedbackCorrect, optionOrder, sortingIndex, sortingVisible, rankingAnswer])
 
   if (!question) return null
 
@@ -92,8 +109,8 @@ export function QuizSession({ questions, initialIndex = 0, headerLabel, onHome, 
       <span className="mechanic">{mechanicLabels[question.type]}</span>
       <h2>{question.prompt}</h2>
       <ReplayVoice label={checked ? "Повторить ответ" : "Повторить вопрос"}/>
-      <QuestionRenderer key={question.id} question={question} answer={currentAnswer} checked={checked} optionOrder={optionOrder} spokenOptionId={spokenOptionId} onChange={setAnswer} onComplete={completeInteractive}/>
-      {checked && <div className={`feedback ${correct ? 'success' : 'error'}`}><b>{correct ? 'Верно!' : 'Разберёмся!'}</b>{question.explanation && <span>{question.explanation}</span>}</div>}
+      <QuestionRenderer key={question.id} question={question} answer={currentAnswer} checked={checked} optionOrder={optionOrder} spokenOptionId={spokenOptionId} onInteract={voice.stop} onSortingActiveChange={onSortingActiveChange} onChange={setAnswer} onComplete={completeInteractive}/>
+      {checked && <div className={`feedback ${correct ? 'success' : 'error'}`}><b>{correct ? 'Верно!' : 'Разберёмся!'}</b>{question.explanation && <span>{question.explanation}</span>}{!correct && question.type === 'true_false' && <span>Верный ответ: {question.correct ? 'правда' : 'ложь'}.</span>}</div>}
       {(checked || !isInteractiveQuestion(question)) && <button className="primary action" disabled={!checked && !canCheck} onClick={checked ? next : submit}>{checked ? index === questions.length - 1 ? 'Узнать результат' : 'Дальше →' : 'Проверить'}</button>}
     </section>
   </div></main>
