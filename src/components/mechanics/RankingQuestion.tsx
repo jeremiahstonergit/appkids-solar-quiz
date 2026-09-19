@@ -5,6 +5,7 @@ import { ObjectCard } from '../ObjectCard'
 
 type RankingQuestionProps = {
   question: RankingQuestionData
+  optionOrder?: string[]
   value: string[]
   checked: boolean
   spokenOptionId?: string
@@ -12,8 +13,9 @@ type RankingQuestionProps = {
   onComplete: (right: boolean) => void
 }
 
-export function RankingQuestion({ question, value, checked, spokenOptionId, onChange, onComplete }: RankingQuestionProps) {
-  const options = useMemo(() => shuffle(question.options), [question])
+export function RankingQuestion({ question, optionOrder, value, checked, spokenOptionId, onChange, onComplete }: RankingQuestionProps) {
+  const shuffledOptions = useMemo(() => shuffle(question.options), [question])
+  const options = optionOrder ?? shuffledOptions
   const [selected, setSelected] = useState<string | undefined>(undefined)
   const [errorSlot, setErrorSlot] = useState<number | undefined>(undefined)
   const [message, setMessage] = useState<'right' | 'wrong' | undefined>(undefined)

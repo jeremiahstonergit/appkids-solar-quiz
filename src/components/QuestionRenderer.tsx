@@ -9,6 +9,7 @@ type QuestionRendererProps = {
   question: Question
   answer: Answer | undefined
   checked: boolean
+  optionOrder?: string[]
   spokenOptionId?: string
   onChange: (answer: Answer) => void
   onComplete: (right: boolean) => void
@@ -17,17 +18,17 @@ type QuestionRendererProps = {
 const assignmentAnswer = (answer: Answer | undefined) =>
   typeof answer === 'object' && answer !== null && !Array.isArray(answer) ? answer : {}
 
-export function QuestionRenderer({ question, answer, checked, spokenOptionId, onChange, onComplete }: QuestionRendererProps) {
+export function QuestionRenderer({ question, answer, checked, optionOrder, spokenOptionId, onChange, onComplete }: QuestionRendererProps) {
   switch (question.type) {
     case 'multiple_choice':
     case 'odd_one_out':
-      return <ChoiceQuestion question={question} value={typeof answer === 'string' ? answer : undefined} checked={checked} spokenOptionId={spokenOptionId} onChange={onChange}/>
+      return <ChoiceQuestion question={question} optionOrder={optionOrder} value={typeof answer === 'string' ? answer : undefined} checked={checked} spokenOptionId={spokenOptionId} onChange={onChange}/>
     case 'missing_item':
-      return <MissingItemQuestion question={question} value={typeof answer === 'string' ? answer : undefined} checked={checked} spokenOptionId={spokenOptionId} onChange={onChange} onComplete={onComplete}/>
+      return <MissingItemQuestion question={question} optionOrder={optionOrder} value={typeof answer === 'string' ? answer : undefined} checked={checked} spokenOptionId={spokenOptionId} onChange={onChange} onComplete={onComplete}/>
     case 'sorting':
-      return <SortingQuestion question={question} value={assignmentAnswer(answer)} checked={checked} onChange={onChange} onComplete={onComplete}/>
+      return <SortingQuestion question={question} optionOrder={optionOrder} value={assignmentAnswer(answer)} checked={checked} onChange={onChange} onComplete={onComplete}/>
     case 'ranking':
-      return <RankingQuestion question={question} value={Array.isArray(answer) ? answer : Array(question.options.length).fill('')} checked={checked} spokenOptionId={spokenOptionId} onChange={onChange} onComplete={onComplete}/>
+      return <RankingQuestion question={question} optionOrder={optionOrder} value={Array.isArray(answer) ? answer : Array(question.options.length).fill('')} checked={checked} spokenOptionId={spokenOptionId} onChange={onChange} onComplete={onComplete}/>
     case 'true_false':
       return <TrueFalseQuestion question={question} value={typeof answer === 'boolean' ? answer : undefined} checked={checked} onChange={onChange}/>
   }

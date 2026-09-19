@@ -5,6 +5,7 @@ import { ObjectCard } from '../ObjectCard'
 
 type MissingItemQuestionProps = {
   question: MissingItemQuestionData
+  optionOrder?: string[]
   value?: string
   checked: boolean
   spokenOptionId?: string
@@ -12,8 +13,9 @@ type MissingItemQuestionProps = {
   onComplete: (right: boolean) => void
 }
 
-export function MissingItemQuestion({ question, value, checked, spokenOptionId, onChange, onComplete }: MissingItemQuestionProps) {
-  const candidates = useMemo(() => shuffle(question.candidates), [question])
+export function MissingItemQuestion({ question, optionOrder, value, checked, spokenOptionId, onChange, onComplete }: MissingItemQuestionProps) {
+  const shuffledCandidates = useMemo(() => shuffle(question.candidates), [question])
+  const candidates = optionOrder ?? shuffledCandidates
   const place = (id: string) => {
     if (checked || !question.candidates.includes(id)) return
     onChange(id)
